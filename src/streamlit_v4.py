@@ -8,7 +8,7 @@ import requests
 st.set_page_config(
     page_title="Montage Auto Leasing Dashboard", page_icon=":car:", layout="wide"
 )
-st.image("src/banner.png", use_column_width=True)
+st.image("src/banner.png", use_container_width=True)
 st.sidebar.image("src/logo.png", width=150)
 
 # -----------------------------
