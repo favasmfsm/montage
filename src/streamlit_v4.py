@@ -72,19 +72,25 @@ selected_price_range = st.sidebar.slider(
 )
 
 
-# # -- API Search Options (separate from CSV filtering) --
-# with st.sidebar.expander("API Search Options"):
-#     # Pre-fill with first selection from CSV filters if available.
-#     api_year = st.text_input(
-#         "API Year", value=str(selected_years[0]) if selected_years else ""
-#     )
-#     api_make = st.text_input(
-#         "API Make", value=selected_makes[0] if selected_makes else ""
-#     )
-#     api_model = st.text_input(
-#         "API Model", value=selected_models[0] if selected_models else ""
-#     )
+with st.sidebar.expander("Taxes and Fees Options"):
+    tax_rate = st.text_input("Tax Rate", value="0.08875")
+    dmv_fee = st.text_input("DMV Fee", value="350")
+    doc_fee = st.text_input("Documentation Fee", value="249")
+    bank_fee = st.text_input("Bank Fee", value="595")
 
+
+# Convert inputs to float while handling empty or invalid values
+def parse_float(value, default):
+    try:
+        return float(value)
+    except ValueError:
+        return default
+
+
+tax_rate = parse_float(tax_rate, 0.08875)
+dmv_fee = parse_float(dmv_fee, 350)
+doc_fee = parse_float(doc_fee, 249)
+bank_fee = parse_float(bank_fee, 595)
 # -----------------------------
 # Apply Filters to CSV Data
 # -----------------------------
@@ -169,18 +175,25 @@ if not filtered_data.empty:
         residual_value = msrp * residual_percentage * 0.01
 
         # Fees and tax rate (adjust these as needed)
-        dmv_fee = 350
-        doc_fee = 249
-        bank_fee = 595
+        # dmv_fee = 350
+        # doc_fee = 249
+        # bank_fee = 595
+        # tax_rate = 0.08875
         fees_sum = dmv_fee + doc_fee
-        tax_rate = 0.08875
-        depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
 
+        depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
         # Option 1: TAXES AND FEES UPFRONT
         tfu_net_cap_cost = residual_value + adjusted_cap_cost
         base_monthly = depreciation_fee + (tfu_net_cap_cost * money_factor)
         total_taxes = base_monthly * tax_rate * lease_term
         option1_first = round(base_monthly + total_taxes + fees_sum + bank_fee, 2)
+        # st.write(
+        #     tfu_net_cap_cost,
+        #     residual_value,
+        #     adjusted_cap_cost,
+        #     depreciation_fee,
+        #     money_factor,
+        # )
 
         # Option 2: LEASE TAX INCLUDED
         lt_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes
