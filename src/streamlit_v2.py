@@ -58,8 +58,10 @@ if trim != "All":
 months = st.sidebar.selectbox("Select Lease Term in months", [24, 27, 30, 33, 36, 39, 42, 48])
 
 st.markdown("## Available Cars in this Configuration")
-st.table(filtered_data[["Package", "Rate Model", "Bank", "MSRP","Adjusted Cap Cost"]])
+st.table(filtered_data[["Package", "Rate Model", "Bank", "MSRP","Adjusted Cap Cost","Year","Make","Model","Trim"]])
 
+
+api_years = filtered_data.
 # -----------------------------
 # Allow User to Pick a Specific Car Configuration
 # -----------------------------
