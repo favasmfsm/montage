@@ -32,34 +32,36 @@ lease_term = st.sidebar.selectbox(
 
 # Filter by Make
 make_options = sorted(df["Make"].dropna().unique())
-selected_makes = st.sidebar.multiselect(
-    "Select Make", options=make_options, default=make_options
-)
+selected_makes = st.sidebar.multiselect("Select Make", options=make_options, default=[])
 
 # Filter by Year
 year_options = sorted(df["Year"].dropna().unique())
-selected_years = st.sidebar.multiselect(
-    "Select Year", options=year_options, default=year_options
-)
+selected_years = st.sidebar.multiselect("Select Year", options=year_options, default=[])
 
-# To determine available Models based on selected makes/years:
+# Apply Make/Year filters if selected
 temp_df = df.copy()
 if selected_makes:
     temp_df = temp_df[temp_df["Make"].isin(selected_makes)]
 if selected_years:
     temp_df = temp_df[temp_df["Year"].isin(selected_years)]
+
+# Model filter (Show all initially)
 model_options = sorted(temp_df["Model"].dropna().unique())
 selected_models = st.sidebar.multiselect(
-    "Select Model", options=model_options, default=model_options
+    "Select Model", options=model_options, default=[]
 )
 
-# Filter by Trim
+# Apply Model filter if selected
 if selected_models:
     temp_df = temp_df[temp_df["Model"].isin(selected_models)]
+
+# Trim filter (Show all initially)
 trim_options = sorted(temp_df["Trim"].dropna().unique())
-selected_trims = st.sidebar.multiselect(
-    "Select Trim", options=trim_options, default=trim_options
-)
+selected_trims = st.sidebar.multiselect("Select Trim", options=trim_options, default=[])
+
+# Apply Trim filter if selected
+if selected_trims:
+    temp_df = temp_df[temp_df["Trim"].isin(selected_trims)]
 
 # Filter by MSRP Range (assumes the CSV has an 'MSRP' column)
 min_price = int(df["MSRP"].min())
@@ -125,15 +127,17 @@ else:
     display_cols = [
         col
         for col in [
-            "Package",
-            "Rate Model",
-            "Bank",
-            "MSRP",
-            "Adjusted Cap Cost",
             "Year",
             "Make",
             "Model",
             "Trim",
+            "Rate Style",
+            "Bank",
+            "MSRP",
+            "Total_Rebates",
+            "Package",
+            "Rate Model",
+            "Adjusted Cap Cost",
             f"residual_value_{lease_term}",
         ]
         if col in filtered_data.columns
@@ -381,69 +385,105 @@ if not filtered_data.empty:
         )
         st.table(lease_df)
 
-# --- 3. Suggested Cars (from API) ---
+
+# Function to fetch API data (cached)
+@st.cache_data
+def fetch_car_data(api_key, selected_years, selected_makes, selected_models):
+    BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}"
+
+    params = {}
+    if selected_years:
+        params["year"] = ",".join(str(year) for year in selected_years)
+    if selected_makes:
+        params["make"] = ",".join(selected_makes)
+    if selected_models:
+        params["model"] = ",".join(selected_models)
+
+    response = requests.get(BASE_URL, params=params)
+
+    if response.status_code == 200:
+        data = response.json().get("listings", [])
+        return pd.DataFrame(data) if data else None
+    else:
+        st.error(f"Error fetching data from API. Status Code: {response.status_code}")
+        return None
+
+
+# --- Suggested Cars Section ---
 st.markdown("## 3. Suggested Cars (from API)")
+
 if st.button("Fetch Suggested Cars"):
-    # Read API key from a file (make sure api.txt exists in your working directory)
-
     if api_key:
-        BASE_URL = (
-            f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}"
-        )
-        # Build the API parameters from the API search options (if provided)
-        params = {}
-        if selected_years:
-            # Convert each year to a string and join with commas.
-            params["year"] = ",".join(str(year) for year in selected_years)
-        if selected_makes:
-            params["make"] = ",".join(selected_makes)
-        if selected_models:
-            params["model"] = ",".join(selected_models)
-        # (Additional parameters can be added as needed.)
-
         with st.spinner("Fetching suggested cars..."):
-            response = requests.get(BASE_URL, params=params)
-            if response.status_code == 200:
-                data = response.json().get("listings", [])
-                if data:
-                    api_df = pd.DataFrame(data)
-                    # Optionally, expand nested columns (for example, 'build')
-                    if "build" in api_df.columns:
-                        build_expanded = api_df["build"].apply(pd.Series)
-                        api_df = pd.concat(
-                            [api_df.drop(columns=["build"]), build_expanded], axis=1
-                        )
-                    st.dataframe(
-                        api_df[
-                            [
-                                "year",
-                                "make",
-                                "model",
-                                "trim",
-                                "version",
-                                "body_type",
-                                "vehicle_type",
-                                "dom",
-                                "vin",
-                                "transmission",
-                                "drivetrain",
-                                "fuel_type",
-                                "engine",
-                                "heading",
-                                "price",
-                                "miles",
-                                "msrp",
-                                "exterior_color",
-                                "interior_color",
-                            ]
-                        ]
+            api_df = fetch_car_data(
+                api_key, selected_years, selected_makes, selected_models
+            )
+
+            if api_df is not None:
+                # Expand "build" column if present
+                if "build" in api_df.columns:
+                    build_expanded = api_df["build"].apply(pd.Series)
+                    api_df = pd.concat(
+                        [api_df.drop(columns=["build"]), build_expanded], axis=1
                     )
-                else:
-                    st.info(
-                        "No suggested cars found from API with the given parameters."
-                    )
+
+                # Sort by MSRP
+                if "msrp" in api_df.columns:
+                    api_df.sort_values(by="msrp", inplace=True, na_position="last")
+
+                # Store data in session state
+                st.session_state["api_df"] = api_df
             else:
-                st.error("Error fetching data from API. Please try again.")
+                st.session_state["api_df"] = None
+                st.info("No suggested cars found from API with the given parameters.")
+
+# Retain fetched data in session state
+if "api_df" in st.session_state and st.session_state["api_df"] is not None:
+    api_df = st.session_state["api_df"]
+
+    # Sidebar filters (do not trigger re-fetch)
+    if "interior_color" in api_df.columns:
+        int_color_options = sorted(api_df["interior_color"].dropna().unique())
+        selected_int_colors = st.sidebar.multiselect(
+            "Select Interior Color", options=int_color_options, default=[]
+        )
+
+    if "exterior_color" in api_df.columns:
+        ext_color_options = sorted(api_df["exterior_color"].dropna().unique())
+        selected_ext_colors = st.sidebar.multiselect(
+            "Select Exterior Color", options=ext_color_options, default=[]
+        )
+
+    # Apply filters dynamically
+    if selected_int_colors:
+        api_df = api_df[api_df["interior_color"].isin(selected_int_colors)]
+    if selected_ext_colors:
+        api_df = api_df[api_df["exterior_color"].isin(selected_ext_colors)]
+
+    # Display data without refetching
+    display_columns = [
+        "year",
+        "make",
+        "model",
+        "trim",
+        "version",
+        "body_type",
+        "vehicle_type",
+        "dom",
+        "vin",
+        "transmission",
+        "drivetrain",
+        "fuel_type",
+        "engine",
+        "heading",
+        "price",
+        "miles",
+        "msrp",
+        "exterior_color",
+        "interior_color",
+    ]
+    existing_columns = [col for col in display_columns if col in api_df.columns]
+    st.dataframe(api_df[existing_columns])
 
 # -----------------------------
 # Footer / Contact Information
