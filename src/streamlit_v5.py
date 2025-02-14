@@ -27,7 +27,7 @@ api_key = st.sidebar.text_input("Enter your API Key", type="password")
 # -- CSV Data Filters (using multiselect for multiple selection) --
 # Lease term selection (in months)
 lease_terms = st.sidebar.multiselect(
-    "Select Lease Term (months)", options=[24, 27, 30, 33, 36, 39, 42, 48], index=4
+    "Select Lease Term (months)", options=[24, 27, 30, 33, 36, 39, 42, 48], default=36
 )  # default is 36 months
 
 # Lease Type Selection
