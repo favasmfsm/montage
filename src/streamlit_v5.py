@@ -619,6 +619,28 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     # Display DataFrame
     st.dataframe(api_df[existing_columns])
 
+    for i, row in api_df.iterrows():
+        st.write(f"### {row['year']} {row['make']} {row['model']} - {row['trim']}")
+
+        # Display all other columns as key-value pairs
+        cols_to_show = "\n".join(
+            [
+                f"**{col.replace('_', ' ').title()}**: {row[col]}"
+                for col in existing_columns
+            ]
+        )
+        st.markdown(cols_to_show)
+
+        # Display image as clickable
+        if row["first_media_photo"]:
+            st.markdown(
+                f'<a href="{row["first_media_photo"]}" target="_blank">'
+                f'<img src="{row["first_media_photo"]}" width="200"></a>',
+                unsafe_allow_html=True,
+            )
+
+        st.write("---")  # Divider between entries
+
 # -----------------------------
 # Footer / Contact Information
 # -----------------------------
