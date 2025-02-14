@@ -402,7 +402,7 @@ if not filtered_data.empty:
                     "Enter custom monthly payment",
                     min_value=0.0,
                     value=round(base_monthly, 2),
-                    key="custom_monthly",
+                    key=f"custom_monthly_{lease_term}",
                 )
 
                 custom_first = (
