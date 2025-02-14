@@ -391,11 +391,11 @@ if not filtered_data.empty:
             )
 
             # Option 7: CUSTOM option
-            st.markdown("### Custom Lease Option")
+            st.markdown(f"### Custom Lease Option {lease_term}")
             input_type = st.radio(
                 "Choose input method for custom lease option:",
                 ["Set Monthly Payment", "Set First Payment"],
-                key="custom_input",
+                key=f"custom_input_{lease_term}",
             )
             if input_type == "Set Monthly Payment":
                 custom_monthly = st.number_input(
