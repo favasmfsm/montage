@@ -581,8 +581,29 @@ if st.button("Fetch Suggested Cars"):
 # Retain fetched data in session state
 if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     api_df = st.session_state["api_df"]
+    vdp_url = api_df["vdp_url"]
+    dealer_name = api_df["dealer"].apply(
+        lambda x: (x["name"] if x and "name" in x else None)
+    )
 
+    dealer_type = api_df["dealer"].apply(
+        lambda x: (x["dealer_type"] if x and "dealer_type" in x else None)
+    )
+    api_df["year"] = api_df["year"].apply(lambda x: f"{x}")
+    api_df["car_link"] = vdp_url
+    api_df["dealer_type"] = dealer_type
+    api_df["dealer_name"] = dealer_name
     # Sidebar filters (do not trigger re-fetch)
+    if "dealer_name" in api_df.columns:
+        dealer_name_options = sorted(api_df["dealer_name"].dropna().unique())
+        selected_dealer_name = st.sidebar.multiselect(
+            "Select Preferred Dealer", options=dealer_name_options, default=[]
+        )
+    if "dealer_type" in api_df.columns:
+        dealer_type_options = sorted(api_df["dealer_type"].dropna().unique())
+        selected_dealer_type = st.sidebar.multiselect(
+            "Select Preferred Dealer Type", options=dealer_type_options, default=[]
+        )
     if "interior_color" in api_df.columns:
         int_color_options = sorted(api_df["interior_color"].dropna().unique())
         selected_int_colors = st.sidebar.multiselect(
@@ -600,19 +621,10 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         api_df = api_df[api_df["interior_color"].isin(selected_int_colors)]
     if selected_ext_colors:
         api_df = api_df[api_df["exterior_color"].isin(selected_ext_colors)]
-
-    vdp_url = api_df["vdp_url"]
-    dealer_name = api_df["dealer"].apply(
-        lambda x: (x["name"] if x and "name" in x else None)
-    )
-
-    dealer_type = api_df["dealer"].apply(
-        lambda x: (x["dealer_type"] if x and "dealer_type" in x else None)
-    )
-    api_df["year"] = api_df["year"].apply(lambda x: f"{x}")
-    api_df["car_link"] = vdp_url
-    api_df["dealer_type"] = dealer_type
-    api_df["dealer_name"] = dealer_name
+    if selected_dealer_name:
+        api_df = api_df[api_df["dealer_name"].isin(selected_dealer_name)]
+    if selected_dealer_type:
+        api_df = api_df[api_df["dealer_type"].isin(selected_dealer_type)]
 
     # Define display columns
     display_columns = [
