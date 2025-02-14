@@ -16,7 +16,7 @@ st.sidebar.image("src/logo.png", width=150)
 # -----------------------------
 # Load your merged CSV file
 try:
-    df = pd.read_csv("./data/merged_data_v2.csv")
+    df = pd.read_csv("./data/merged_data_v3.csv")
 except Exception as e:
     st.error("Error loading CSV file.")
     st.stop()
@@ -87,7 +87,7 @@ selected_price_range = st.sidebar.slider(
 
 
 with st.sidebar.expander("Taxes and Fees Options"):
-    tax_rate = st.text_input("Tax Rate", value="0.08875")
+    tax_rate = st.text_input("% Tax Rate", value="8.875")
     dmv_fee = st.text_input("DMV Fee", value="350")
     doc_fee = st.text_input("Documentation Fee", value="249")
     bank_fee = st.text_input("Bank Fee", value="595")
@@ -101,7 +101,7 @@ def parse_float(value, default):
         return default
 
 
-tax_rate = parse_float(tax_rate, 0.08875)
+tax_rate = parse_float(tax_rate, 8.875) * 0.01  # Convert percentage to decimal
 dmv_fee = parse_float(dmv_fee, 350)
 doc_fee = parse_float(doc_fee, 249)
 bank_fee = parse_float(bank_fee, 595)
@@ -241,6 +241,8 @@ else:
     filtered_data[f"residual_value_{lease_term}"] = (
         filtered_data["MSRP"] * filtered_data[f"RP {lease_term}"] * 0.01
     )
+    filtered_data["Year"] = filtered_data["Year"].apply(lambda x: f"{x}")
+
     display_cols = [
         col
         for col in [
@@ -579,7 +581,15 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     if selected_ext_colors:
         api_df = api_df[api_df["exterior_color"].isin(selected_ext_colors)]
 
-    # Display data without refetching
+    first_photo_link = api_df["media"].apply(
+        lambda x: (
+            x[0]["photo_links"][0]
+            if isinstance(x, list) and x and "photo_links" in x[0]
+            else None
+        )
+    )
+
+    # Define display columns
     display_columns = [
         "year",
         "make",
@@ -595,13 +605,21 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "fuel_type",
         "engine",
         "heading",
+        "msrp",
         "price",
         "miles",
-        "msrp",
         "exterior_color",
         "interior_color",
     ]
+
+    # Add extracted media column
+    api_df["first_media_photo"] = first_photo_link
+    display_columns.append("first_media_photo")
+
+    # Ensure columns exist in DataFrame
     existing_columns = [col for col in display_columns if col in api_df.columns]
+
+    # Display DataFrame
     st.dataframe(api_df[existing_columns])
 
 # -----------------------------
