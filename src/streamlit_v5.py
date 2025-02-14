@@ -266,7 +266,7 @@ else:
     for lease_term in lease_terms:
         display_cols += [
             f"Monthly Payment_{lease_term}",
-            f"First Payment_{lease_term}",
+            f"Due at Signing_{lease_term}",
             f"residual_value_{lease_term}",
         ]
     st.dataframe(filtered_data[display_cols])
