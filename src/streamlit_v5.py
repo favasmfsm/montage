@@ -209,6 +209,7 @@ def compute_lease(row, lease_term):
     else:
         return pd.Series([round(base_monthly, 2), option1_first])
 
+
 for lease_term in lease_terms:
     filtered_data[[f"Monthly Payment_{lease_term}", f"Due at Signing_{lease_term}"]] = (
         filtered_data.apply(lambda x: compute_lease(x, lease_term), axis=1)
@@ -263,7 +264,11 @@ else:
         if col in filtered_data.columns
     ]
     for lease_term in lease_terms:
-        display_cols += [f"Monthly Payment_{}",f"First Payment_{}",f"residual_value_{lease_term}"]
+        display_cols += [
+            f"Monthly Payment_{lease_term}",
+            f"First Payment_{lease_term}",
+            f"residual_value_{lease_term}",
+        ]
     st.dataframe(filtered_data[display_cols])
 
 # --- 2. Lease Computation ---
@@ -332,7 +337,9 @@ if not filtered_data.empty:
             option2_first = round(monthly_lt_included + fees_sum + bank_fee, 2)
 
             # Option 3: TAXES AND BANK
-            tb_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes + bank_fee
+            tb_net_cap_cost = (
+                residual_value + adjusted_cap_cost + total_taxes + bank_fee
+            )
             monthly_taxes_bank = (
                 depreciation_fee
                 + (tb_net_cap_cost * money_factor)
@@ -372,9 +379,9 @@ if not filtered_data.empty:
             option5_first = 0
 
             # Option 6: ONEPAY
-            one_pay_monthly = depreciation_fee + (residual_value + adjusted_cap_cost) * (
-                money_factor - 0.0008
-            )
+            one_pay_monthly = depreciation_fee + (
+                residual_value + adjusted_cap_cost
+            ) * (money_factor - 0.0008)
             onepay_total = (
                 one_pay_monthly * lease_term
                 + one_pay_monthly * tax_rate * lease_term
