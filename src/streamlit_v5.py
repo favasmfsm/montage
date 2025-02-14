@@ -210,7 +210,7 @@ def compute_lease(row):
         return pd.Series([round(base_monthly, 2), option1_first])
 
 
-filtered_data[["Monthly Payment", "First Payment"]] = filtered_data.apply(
+filtered_data[["Monthly Payment", "Due at Signing"]] = filtered_data.apply(
     compute_lease, axis=1
 )
 
