@@ -239,9 +239,10 @@ if filtered_data.empty:
     st.warning("No cars found with the selected filters.")
 else:
     # Display a subset of columns (adjust as needed)
-    filtered_data[f"residual_value_{lease_term}"] = (
-        filtered_data["MSRP"] * filtered_data[f"RP {lease_term}"] * 0.01
-    )
+    for lease_term in lease_terms:
+        filtered_data[f"residual_value_{lease_term}"] = (
+            filtered_data["MSRP"] * filtered_data[f"RP {lease_term}"] * 0.01
+        )
     filtered_data["Year"] = filtered_data["Year"].apply(lambda x: f"{x}")
 
     display_cols = [
