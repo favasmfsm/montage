@@ -26,7 +26,7 @@ api_key = st.sidebar.text_input("Enter your API Key", type="password")
 
 # -- CSV Data Filters (using multiselect for multiple selection) --
 # Lease term selection (in months)
-lease_term = st.sidebar.selectbox(
+lease_terms = st.sidebar.multiselect(
     "Select Lease Term (months)", options=[24, 27, 30, 33, 36, 39, 42, 48], index=4
 )  # default is 36 months
 
@@ -112,7 +112,7 @@ filtered_data = df.copy()
 
 
 # Lease Computation for Each Entry
-def compute_lease(row):
+def compute_lease(row, lease_term):
     adjusted_cap_cost = row.get("Adjusted Cap Cost", 0)
     residual_value = row.get(f"residual_value_{lease_term}", 0)
     money_factor = row.get(f"MF {lease_term}", 0)
@@ -209,10 +209,10 @@ def compute_lease(row):
     else:
         return pd.Series([round(base_monthly, 2), option1_first])
 
-
-filtered_data[["Monthly Payment", "Due at Signing"]] = filtered_data.apply(
-    compute_lease, axis=1
-)
+for lease_term in lease_terms:
+    filtered_data[[f"Monthly Payment_{lease_term}", f"Due at Signing_{lease_term}"]] = (
+        filtered_data.apply(lambda x: compute_lease(x, lease_term), axis=1)
+    )
 
 if selected_makes:
     filtered_data = filtered_data[filtered_data["Make"].isin(selected_makes)]
@@ -253,16 +253,17 @@ else:
             "Rate Style",
             "Bank",
             "MSRP",
-            "Monthly Payment",
-            "First Payment",
+            # "Monthly Payment",
+            # "First Payment",
             "Total_Rebates",
             "Package",
             "Rate Model",
             "Adjusted Cap Cost",
-            f"residual_value_{lease_term}",
         ]
         if col in filtered_data.columns
     ]
+    for lease_term in lease_terms:
+        display_cols += [f"Monthly Payment_{}",f"First Payment_{}",f"residual_value_{lease_term}"]
     st.dataframe(filtered_data[display_cols])
 
 # --- 2. Lease Computation ---
@@ -284,227 +285,228 @@ if not filtered_data.empty:
     # --- Lease Computation ---
     # The lease computation requires columns for residual percentage and money factor.
     # For a given lease term, these are assumed to be named like "RP 36" and "MF 36".
-    rp_column = f"RP {lease_term}"
-    mf_column = f"MF {lease_term}"
+    for lease_term in lease_terms:
+        rp_column = f"RP {lease_term}"
+        mf_column = f"MF {lease_term}"
 
-    if rp_column not in selected_config or mf_column not in selected_config:
-        st.error(
-            f"Required columns '{rp_column}' and/or '{mf_column}' not found in the data."
-        )
-    else:
-        # Extract values from the selected configuration
-        msrp = selected_config["MSRP"]
-        adjusted_cap_cost = selected_config["Adjusted Cap Cost"]
-        residual_percentage = selected_config[rp_column]  # e.g., 50 for 50%
-        money_factor = selected_config[mf_column]
-        residual_value = msrp * residual_percentage * 0.01
-
-        # Fees and tax rate (adjust these as needed)
-        # dmv_fee = 350
-        # doc_fee = 249
-        # bank_fee = 595
-        # tax_rate = 0.08875
-        fees_sum = dmv_fee + doc_fee
-
-        depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
-        # Option 1: TAXES AND FEES UPFRONT
-        tfu_net_cap_cost = residual_value + adjusted_cap_cost
-        base_monthly = depreciation_fee + (tfu_net_cap_cost * money_factor)
-        total_taxes = base_monthly * tax_rate * lease_term
-        option1_first = round(base_monthly + total_taxes + fees_sum + bank_fee, 2)
-        # st.write(
-        #     tfu_net_cap_cost,
-        #     residual_value,
-        #     adjusted_cap_cost,
-        #     depreciation_fee,
-        #     money_factor,
-        # )
-
-        # Option 2: LEASE TAX INCLUDED
-        lt_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes
-        monthly_lt_included = (
-            depreciation_fee
-            + (lt_net_cap_cost * money_factor)
-            + total_taxes / lease_term
-        )
-        option2_first = round(monthly_lt_included + fees_sum + bank_fee, 2)
-
-        # Option 3: TAXES AND BANK
-        tb_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes + bank_fee
-        monthly_taxes_bank = (
-            depreciation_fee
-            + (tb_net_cap_cost * money_factor)
-            + (total_taxes + bank_fee) / lease_term
-        )
-        option3_first = round(monthly_taxes_bank + (dmv_fee + doc_fee), 2)
-
-        # Option 4: First Due
-        fd_net_cap_cost = (
-            residual_value + adjusted_cap_cost + total_taxes + bank_fee + fees_sum
-        )
-        monthly_first_due = (
-            depreciation_fee
-            + (fd_net_cap_cost * money_factor)
-            + (total_taxes + bank_fee + fees_sum) / lease_term
-        )
-        option4_first = round(monthly_first_due, 2)
-
-        # Option 5: SIGN AND DRIVE $0 DAS
-        if lease_term > 1:
-            sad_net_cap_cost = (
-                residual_value
-                + adjusted_cap_cost
-                + total_taxes
-                + bank_fee
-                + fees_sum
-                + monthly_first_due
-            )
-            monthly_sign_drive = (
-                depreciation_fee
-                + (sad_net_cap_cost * money_factor)
-                + (total_taxes + bank_fee + fees_sum + monthly_first_due)
-                / (lease_term - 1)
+        if rp_column not in selected_config or mf_column not in selected_config:
+            st.error(
+                f"Required columns '{rp_column}' and/or '{mf_column}' not found in the data."
             )
         else:
-            monthly_sign_drive = 0
-        option5_first = 0
+            # Extract values from the selected configuration
+            msrp = selected_config["MSRP"]
+            adjusted_cap_cost = selected_config["Adjusted Cap Cost"]
+            residual_percentage = selected_config[rp_column]  # e.g., 50 for 50%
+            money_factor = selected_config[mf_column]
+            residual_value = msrp * residual_percentage * 0.01
 
-        # Option 6: ONEPAY
-        one_pay_monthly = depreciation_fee + (residual_value + adjusted_cap_cost) * (
-            money_factor - 0.0008
-        )
-        onepay_total = (
-            one_pay_monthly * lease_term
-            + one_pay_monthly * tax_rate * lease_term
-            + bank_fee
-            + fees_sum
-        )
+            # Fees and tax rate (adjust these as needed)
+            # dmv_fee = 350
+            # doc_fee = 249
+            # bank_fee = 595
+            # tax_rate = 0.08875
+            fees_sum = dmv_fee + doc_fee
 
-        # Option 7: CUSTOM option
-        st.markdown("### Custom Lease Option")
-        input_type = st.radio(
-            "Choose input method for custom lease option:",
-            ["Set Monthly Payment", "Set First Payment"],
-            key="custom_input",
-        )
-        if input_type == "Set Monthly Payment":
-            custom_monthly = st.number_input(
-                "Enter custom monthly payment",
-                min_value=0.0,
-                value=round(base_monthly, 2),
-                key="custom_monthly",
+            depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
+            # Option 1: TAXES AND FEES UPFRONT
+            tfu_net_cap_cost = residual_value + adjusted_cap_cost
+            base_monthly = depreciation_fee + (tfu_net_cap_cost * money_factor)
+            total_taxes = base_monthly * tax_rate * lease_term
+            option1_first = round(base_monthly + total_taxes + fees_sum + bank_fee, 2)
+            # st.write(
+            #     tfu_net_cap_cost,
+            #     residual_value,
+            #     adjusted_cap_cost,
+            #     depreciation_fee,
+            #     money_factor,
+            # )
+
+            # Option 2: LEASE TAX INCLUDED
+            lt_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes
+            monthly_lt_included = (
+                depreciation_fee
+                + (lt_net_cap_cost * money_factor)
+                + total_taxes / lease_term
             )
+            option2_first = round(monthly_lt_included + fees_sum + bank_fee, 2)
 
-            custom_first = (
-                -(
-                    (
-                        (lease_term * custom_monthly)
-                        + ((1 - (lease_term * money_factor)) * residual_value)
-                    )
-                    / (1 + lease_term * money_factor)
+            # Option 3: TAXES AND BANK
+            tb_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes + bank_fee
+            monthly_taxes_bank = (
+                depreciation_fee
+                + (tb_net_cap_cost * money_factor)
+                + (total_taxes + bank_fee) / lease_term
+            )
+            option3_first = round(monthly_taxes_bank + (dmv_fee + doc_fee), 2)
+
+            # Option 4: First Due
+            fd_net_cap_cost = (
+                residual_value + adjusted_cap_cost + total_taxes + bank_fee + fees_sum
+            )
+            monthly_first_due = (
+                depreciation_fee
+                + (fd_net_cap_cost * money_factor)
+                + (total_taxes + bank_fee + fees_sum) / lease_term
+            )
+            option4_first = round(monthly_first_due, 2)
+
+            # Option 5: SIGN AND DRIVE $0 DAS
+            if lease_term > 1:
+                sad_net_cap_cost = (
+                    residual_value
+                    + adjusted_cap_cost
+                    + total_taxes
+                    + bank_fee
+                    + fees_sum
+                    + monthly_first_due
                 )
-                + adjusted_cap_cost
-                + custom_monthly
-                + total_taxes
-                + bank_fee
-                + dmv_fee
-                + doc_fee
-            )
-            custom_first = round(custom_first, 2)  # Auto-compute first payment
+                monthly_sign_drive = (
+                    depreciation_fee
+                    + (sad_net_cap_cost * money_factor)
+                    + (total_taxes + bank_fee + fees_sum + monthly_first_due)
+                    / (lease_term - 1)
+                )
+            else:
+                monthly_sign_drive = 0
+            option5_first = 0
 
-        else:
-            custom_first = st.number_input(
-                "Enter custom first payment",
-                min_value=0.0,
-                value=round(base_monthly + total_taxes + fees_sum, 2),
-                key="custom_first",
+            # Option 6: ONEPAY
+            one_pay_monthly = depreciation_fee + (residual_value + adjusted_cap_cost) * (
+                money_factor - 0.0008
             )
-            custom_net_cap_cost = (
-                adjusted_cap_cost
-                + residual_value
-                + total_taxes
+            onepay_total = (
+                one_pay_monthly * lease_term
+                + one_pay_monthly * tax_rate * lease_term
                 + bank_fee
                 + fees_sum
-                - custom_first
             )
-            custom_monthly = (
-                depreciation_fee
-                + custom_net_cap_cost * money_factor
-                + (custom_net_cap_cost - adjusted_cap_cost) / lease_term
-            )
-        # Assemble lease options into a dictionary
-        lease_options = {
-            "TAXES AND FEES UPFRONT": {
-                "Monthly Payment": round(base_monthly, 2),
-                "Bank Fee": bank_fee,
-                "DMV Fee": dmv_fee,
-                "Doc Fee": doc_fee,
-                "Taxes": round(total_taxes, 2),
-                "First Payment": option1_first,
-            },
-            "LEASE TAX INCLUDED": {
-                "Monthly Payment": round(monthly_lt_included, 2),
-                "Bank Fee": bank_fee,
-                "DMV Fee": dmv_fee,
-                "Doc Fee": doc_fee,
-                "Taxes": 0,
-                "First Payment": option2_first,
-            },
-            "TAXES AND BANK": {
-                "Monthly Payment": round(monthly_taxes_bank, 2),
-                "Bank Fee": 0,
-                "DMV Fee": dmv_fee,
-                "Doc Fee": doc_fee,
-                "Taxes": 0,
-                "First Payment": option3_first,
-            },
-            "First Due": {
-                "Monthly Payment": round(monthly_first_due, 2),
-                "Bank Fee": 0,
-                "DMV Fee": 0,
-                "Doc Fee": 0,
-                "Taxes": 0,
-                "First Payment": option4_first,
-            },
-            "SIGN AND DRIVE $0 DAS": {
-                "Monthly Payment": round(monthly_sign_drive, 2),
-                "Bank Fee": 0,
-                "DMV Fee": 0,
-                "Doc Fee": 0,
-                "Taxes": 0,
-                "First Payment": option5_first,
-            },
-            "ONEPAY": {
-                "Monthly Payment": 0,
-                "Bank Fee": bank_fee,
-                "DMV Fee": dmv_fee,
-                "Doc Fee": doc_fee,
-                "Taxes": round(total_taxes, 2),
-                "First Payment": round(onepay_total, 2),
-            },
-            "CUSTOM": {
-                "Monthly Payment": custom_monthly,
-                "Bank Fee": bank_fee,
-                "DMV Fee": dmv_fee,
-                "Doc Fee": doc_fee,
-                "Taxes": round(total_taxes, 2),
-                "First Payment": custom_first,
-            },
-        }
 
-        # Convert the lease options to a DataFrame for display
-        lease_df = pd.DataFrame(lease_options)
-        lease_df = lease_df.reindex(
-            [
-                "Monthly Payment",
-                "Bank Fee",
-                "DMV Fee",
-                "Doc Fee",
-                "Taxes",
-                "First Payment",
-            ]
-        )
-        st.table(lease_df)
+            # Option 7: CUSTOM option
+            st.markdown("### Custom Lease Option")
+            input_type = st.radio(
+                "Choose input method for custom lease option:",
+                ["Set Monthly Payment", "Set First Payment"],
+                key="custom_input",
+            )
+            if input_type == "Set Monthly Payment":
+                custom_monthly = st.number_input(
+                    "Enter custom monthly payment",
+                    min_value=0.0,
+                    value=round(base_monthly, 2),
+                    key="custom_monthly",
+                )
+
+                custom_first = (
+                    -(
+                        (
+                            (lease_term * custom_monthly)
+                            + ((1 - (lease_term * money_factor)) * residual_value)
+                        )
+                        / (1 + lease_term * money_factor)
+                    )
+                    + adjusted_cap_cost
+                    + custom_monthly
+                    + total_taxes
+                    + bank_fee
+                    + dmv_fee
+                    + doc_fee
+                )
+                custom_first = round(custom_first, 2)  # Auto-compute first payment
+
+            else:
+                custom_first = st.number_input(
+                    "Enter custom first payment",
+                    min_value=0.0,
+                    value=round(base_monthly + total_taxes + fees_sum, 2),
+                    key="custom_first",
+                )
+                custom_net_cap_cost = (
+                    adjusted_cap_cost
+                    + residual_value
+                    + total_taxes
+                    + bank_fee
+                    + fees_sum
+                    - custom_first
+                )
+                custom_monthly = (
+                    depreciation_fee
+                    + custom_net_cap_cost * money_factor
+                    + (custom_net_cap_cost - adjusted_cap_cost) / lease_term
+                )
+            # Assemble lease options into a dictionary
+            lease_options = {
+                "TAXES AND FEES UPFRONT": {
+                    "Monthly Payment": round(base_monthly, 2),
+                    "Bank Fee": bank_fee,
+                    "DMV Fee": dmv_fee,
+                    "Doc Fee": doc_fee,
+                    "Taxes": round(total_taxes, 2),
+                    "First Payment": option1_first,
+                },
+                "LEASE TAX INCLUDED": {
+                    "Monthly Payment": round(monthly_lt_included, 2),
+                    "Bank Fee": bank_fee,
+                    "DMV Fee": dmv_fee,
+                    "Doc Fee": doc_fee,
+                    "Taxes": 0,
+                    "First Payment": option2_first,
+                },
+                "TAXES AND BANK": {
+                    "Monthly Payment": round(monthly_taxes_bank, 2),
+                    "Bank Fee": 0,
+                    "DMV Fee": dmv_fee,
+                    "Doc Fee": doc_fee,
+                    "Taxes": 0,
+                    "First Payment": option3_first,
+                },
+                "First Due": {
+                    "Monthly Payment": round(monthly_first_due, 2),
+                    "Bank Fee": 0,
+                    "DMV Fee": 0,
+                    "Doc Fee": 0,
+                    "Taxes": 0,
+                    "First Payment": option4_first,
+                },
+                "SIGN AND DRIVE $0 DAS": {
+                    "Monthly Payment": round(monthly_sign_drive, 2),
+                    "Bank Fee": 0,
+                    "DMV Fee": 0,
+                    "Doc Fee": 0,
+                    "Taxes": 0,
+                    "First Payment": option5_first,
+                },
+                "ONEPAY": {
+                    "Monthly Payment": 0,
+                    "Bank Fee": bank_fee,
+                    "DMV Fee": dmv_fee,
+                    "Doc Fee": doc_fee,
+                    "Taxes": round(total_taxes, 2),
+                    "First Payment": round(onepay_total, 2),
+                },
+                "CUSTOM": {
+                    "Monthly Payment": custom_monthly,
+                    "Bank Fee": bank_fee,
+                    "DMV Fee": dmv_fee,
+                    "Doc Fee": doc_fee,
+                    "Taxes": round(total_taxes, 2),
+                    "First Payment": custom_first,
+                },
+            }
+
+            # Convert the lease options to a DataFrame for display
+            lease_df = pd.DataFrame(lease_options)
+            lease_df = lease_df.reindex(
+                [
+                    "Monthly Payment",
+                    "Bank Fee",
+                    "DMV Fee",
+                    "Doc Fee",
+                    "Taxes",
+                    "First Payment",
+                ]
+            )
+            st.table(lease_df)
 
 
 # Function to fetch API data (cached)
@@ -581,9 +583,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     if selected_ext_colors:
         api_df = api_df[api_df["exterior_color"].isin(selected_ext_colors)]
 
-    first_photo_link = api_df["media"].apply(
-        lambda x: (x["photo_links"][0] if x and "photo_links" in x else None)
-    )
+    vdp_url = api_df["vdp_url"]
     dealer_name = api_df["dealer"].apply(
         lambda x: (x["name"] if x and "name" in x else None)
     )
@@ -592,7 +592,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         lambda x: (x["dealer_type"] if x and "dealer_type" in x else None)
     )
     api_df["year"] = api_df["year"].apply(lambda x: f"{x}")
-    api_df["first_media_photo"] = first_photo_link
+    api_df["car_link"] = vdp_url
     api_df["dealer_type"] = dealer_type
     api_df["dealer_name"] = dealer_name
 
@@ -619,7 +619,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "dealer_type",
         "exterior_color",
         "interior_color",
-        "first_media_photo",
+        "car_link",
     ]
 
     # Add extracted media column
