@@ -274,7 +274,8 @@ else:
 
 # --- 2. Lease Computation ---
 if not filtered_data.empty:
-    with st.expander("## 2. Lease Computation"):
+    with st.expander("### Compute lease"):
+        st.markdown("## 2. Lease Computation")  # Explicitly setting the heading inside
 
         st.write("Select a car configuration for lease computation:")
         # Create selection options from the filtered data indices
