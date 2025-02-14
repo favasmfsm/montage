@@ -427,7 +427,7 @@ if not filtered_data.empty:
                     "Enter custom first payment",
                     min_value=0.0,
                     value=round(base_monthly + total_taxes + fees_sum, 2),
-                    key="custom_first",
+                    key=f"custom_first_{lease_term}",
                 )
                 custom_net_cap_cost = (
                     adjusted_cap_cost
