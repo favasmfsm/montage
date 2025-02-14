@@ -1,4 +1,4 @@
-Unnamed: 0,Package,Rate Model,Bank,MSRP,Invoice,Formula,Buying,Selling Price_36,Selling Price,Default Rebates,Nondefault Rebates,Default Rebates_36,Total_Rebates,Adjusted Cap Cost,Rate Style,MF 24,RP 24,MF 27,RP 27,MF 30,RP 30,MF 33,RP 33,MF 36,RP 36,MF 39,RP 39,MF 42,RP 42,MF 48,RP 48,Package Id,Bank Id,car_details,Year,Make,Model,Trim
+Unnamed: 0,Package,Rate Model,Bank,MSRP,Invoice,Formula,Buying,Selling Price_36,Selling Price,Default Rebates,Nondefault Rebates,Default Rebates_36,Total_Rebates,Adjusted Cap Cost,Trim,MF 24,RP 24,MF 27,RP 27,MF 30,RP 30,MF 33,RP 33,MF 36,RP 36,MF 39,RP 39,MF 42,RP 42,MF 48,RP 48,Package Id,Bank Id,car_details,Year,Make,Model,Rate Style
 0,2024 Acura ZDX AWD SUV,ZDX AWD,American Honda Finance (Acura),70450,69208,0.98237,0,69208,69208,,,"Clean Vehicle Lease Credit (7,500)
 Captive Lease Offer (7,200)
 Dealer / Lease / Finance Cash (5,500)

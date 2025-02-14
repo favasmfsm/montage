@@ -583,8 +583,8 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
 
     first_photo_link = api_df["media"].apply(
         lambda x: (
-            x[0]["photo_links"][0]
-            if isinstance(x, list) and x and "photo_links" in x[0]
+            x["photo_links"][0]
+            if isinstance(x, list) and x and "photo_links" in x
             else None
         )
     )
