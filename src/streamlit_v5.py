@@ -584,7 +584,17 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     first_photo_link = api_df["media"].apply(
         lambda x: (x["photo_links"][0] if x and "photo_links" in x else None)
     )
+    dealer_name = api_df["dealer"].apply(
+        lambda x: (x["name"] if x and "name" in x else None)
+    )
+
+    dealer_type = api_df["dealer"].apply(
+        lambda x: (x["dealer_type"] if x and "dealer_type" in x else None)
+    )
     api_df["year"] = api_df["year"].apply(lambda x: f"{x}")
+    api_df["first_media_photo"] = first_photo_link
+    api_df["dealer_type"] = dealer_type
+    api_df["dealer_name"] = dealer_name
 
     # Define display columns
     display_columns = [
@@ -605,19 +615,22 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "msrp",
         "price",
         "miles",
+        "dealer_name",
+        "dealer_type",
         "exterior_color",
         "interior_color",
+        "first_media_photo",
     ]
 
     # Add extracted media column
-    api_df["first_media_photo"] = first_photo_link
-    display_columns.append("first_media_photo")
 
-    # Ensure columns exist in DataFrame
-    existing_columns = [col for col in display_columns if col in api_df.columns]
+    # display_columns.append("first_media_photo")
+
+    # # Ensure columns exist in DataFrame
+    # existing_columns = [col for col in display_columns if col in api_df.columns]
 
     # Display DataFrame
-    st.dataframe(api_df[existing_columns])
+    st.dataframe(api_df[display_columns])
 
     # for i, row in api_df.iterrows():
     #     st.write(f"### {row['year']} {row['make']} {row['model']} - {row['trim']}")
