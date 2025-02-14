@@ -582,11 +582,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         api_df = api_df[api_df["exterior_color"].isin(selected_ext_colors)]
 
     first_photo_link = api_df["media"].apply(
-        lambda x: (
-            x["photo_links"][0]
-            if isinstance(x, list) and x and "photo_links" in x
-            else None
-        )
+        lambda x: (x["photo_links"][0] if x and "photo_links" in x else None)
     )
     api_df["year"] = api_df["year"].apply(lambda x: f"{x}")
 
