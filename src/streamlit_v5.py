@@ -588,6 +588,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
             else None
         )
     )
+    api_df["year"] = api_df["year"].apply(lambda x: f"{x}")
 
     # Define display columns
     display_columns = [
