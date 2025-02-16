@@ -252,7 +252,7 @@ else:
             "Make",
             "Model",
             "Trim",
-            "Rate Style",
+            "Style",
             "Bank",
             "MSRP",
             # "Monthly Payment",
@@ -272,25 +272,27 @@ else:
         ]
     st.dataframe(filtered_data[display_cols])
 
+
+st.write("Select a car configuration for lease computation:")
+# Create selection options from the filtered data indices
+config_options = filtered_data.index.tolist()
+
+
+def format_option(idx):
+    row = filtered_data.loc[idx]
+    return f"{row['Make']} {row['Model']} {row['Trim']} — MSRP: {row['MSRP']}"
+
+
+selected_idx = st.selectbox(
+    "Select a car configuration",
+    options=config_options,
+    format_func=format_option,
+)
+selected_config = filtered_data.loc[selected_idx]
 # --- 2. Lease Computation ---
 if not filtered_data.empty:
     with st.expander("### Compute lease"):
         st.markdown("## 2. Lease Computation")  # Explicitly setting the heading inside
-
-        st.write("Select a car configuration for lease computation:")
-        # Create selection options from the filtered data indices
-        config_options = filtered_data.index.tolist()
-
-        def format_option(idx):
-            row = filtered_data.loc[idx]
-            return f"{row['Make']} {row['Model']} {row['Trim']} — MSRP: {row['MSRP']}"
-
-        selected_idx = st.selectbox(
-            "Select a car configuration",
-            options=config_options,
-            format_func=format_option,
-        )
-        selected_config = filtered_data.loc[selected_idx]
 
         # --- Lease Computation ---
         # The lease computation requires columns for residual percentage and money factor.
@@ -529,16 +531,23 @@ if not filtered_data.empty:
 
 # Function to fetch API data (cached)
 @st.cache_data
-def fetch_car_data(api_key, selected_years, selected_makes, selected_models):
+def fetch_car_data(
+    api_key, selected_year, selected_make, selected_model, zip_code, radius, msrp_range
+):
     BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}"
 
     params = {}
     if selected_years:
-        params["year"] = ",".join(str(year) for year in selected_years)
+        params["year"] = selected_year
     if selected_makes:
-        params["make"] = ",".join(selected_makes)
+        params["make"] = selected_make
     if selected_models:
-        params["model"] = ",".join(selected_models)
+        params["model"] = selected_model
+    if zip_code:
+        params["zip"] = zip_code
+    if radius:
+        params["radius"] = radius
+    params["msrp_range"] = msrp_range
 
     response = requests.get(BASE_URL, params=params)
 
@@ -552,12 +561,25 @@ def fetch_car_data(api_key, selected_years, selected_makes, selected_models):
 
 # --- Suggested Cars Section ---
 st.markdown("## 3. Suggested Cars (from API)")
+zip_code = st.sidebar.text_input("ZIP Code", "")
+radius = st.sidebar.number_input("Radius (miles)", min_value=1)
+msrp_values = st.sidebar.number_input("MSRP range from selected config", min_value=100)
+msrp_range = (
+    f"{selected_config['MSRP']-msrp_values}-{selected_config['MSRP']+msrp_values}"
+)
 
 if st.button("Fetch Suggested Cars"):
     if api_key:
+
         with st.spinner("Fetching suggested cars..."):
             api_df = fetch_car_data(
-                api_key, selected_years, selected_makes, selected_models
+                api_key,
+                int(selected_config["Year"]),
+                selected_config["Make"],
+                selected_config["Model"],
+                zip_code,
+                radius,
+                msrp_range,
             )
 
             if api_df is not None:
@@ -585,7 +607,9 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     dealer_name = api_df["dealer"].apply(
         lambda x: (x["name"] if x and "name" in x else None)
     )
-
+    dealer_zip = api_df["dealer"].apply(
+        lambda x: (x["zip"] if x and "zip" in x else None)
+    )
     dealer_type = api_df["dealer"].apply(
         lambda x: (x["dealer_type"] if x and "dealer_type" in x else None)
     )
@@ -593,7 +617,9 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     api_df["car_link"] = vdp_url
     api_df["dealer_type"] = dealer_type
     api_df["dealer_name"] = dealer_name
+    api_df["dealer_zip"] = dealer_zip
     # Sidebar filters (do not trigger re-fetch)
+
     if "dealer_name" in api_df.columns:
         dealer_name_options = sorted(api_df["dealer_name"].dropna().unique())
         selected_dealer_name = st.sidebar.multiselect(
@@ -650,6 +676,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "exterior_color",
         "interior_color",
         "car_link",
+        "dealer_zip",
     ]
 
     # Add extracted media column
