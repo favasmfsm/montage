@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import requests
+from utils import parse_float, compute_lease
+from api import fetch_car_data
+from sidebar import sidebar_filters
 
 # -----------------------------
 # Page & Logo/Banner Setup
@@ -21,199 +24,39 @@ except Exception as e:
     st.error("Error loading CSV file.")
     st.stop()
 
-st.sidebar.header("Filter Options")
-api_key = st.sidebar.text_input("Enter your API Key", type="password")
-
-# -- CSV Data Filters (using multiselect for multiple selection) --
-# Lease term selection (in months)
-lease_terms = st.sidebar.multiselect(
-    "Select Lease Term (months)", options=[24, 27, 30, 33, 36, 39, 42, 48], default=36
-)  # default is 36 months
-
-# Lease Type Selection
-lease_type = st.sidebar.selectbox(
-    "Select Lease Type",
-    [
-        "TAXES AND FEES UPFRONT",
-        "LEASE TAX INCLUDED",
-        "TAXES AND BANK",
-        "First Due",
-        "SIGN AND DRIVE $0 DAS",
-        "ONEPAY",
-    ],
-)
-# Filter by Make
-make_options = sorted(df["Make"].dropna().unique())
-selected_makes = st.sidebar.multiselect("Select Make", options=make_options, default=[])
-
-# Filter by Year
-year_options = sorted(df["Year"].dropna().unique())
-selected_years = st.sidebar.multiselect("Select Year", options=year_options, default=[])
-
-# Apply Make/Year filters if selected
-temp_df = df.copy()
-if selected_makes:
-    temp_df = temp_df[temp_df["Make"].isin(selected_makes)]
-if selected_years:
-    temp_df = temp_df[temp_df["Year"].isin(selected_years)]
-
-# Model filter (Show all initially)
-model_options = sorted(temp_df["Model"].dropna().unique())
-selected_models = st.sidebar.multiselect(
-    "Select Model", options=model_options, default=[]
-)
-
-# Apply Model filter if selected
-if selected_models:
-    temp_df = temp_df[temp_df["Model"].isin(selected_models)]
-
-# Trim filter (Show all initially)
-trim_options = sorted(temp_df["Trim"].dropna().unique())
-selected_trims = st.sidebar.multiselect("Select Trim", options=trim_options, default=[])
-
-# Apply Trim filter if selected
-if selected_trims:
-    temp_df = temp_df[temp_df["Trim"].isin(selected_trims)]
-
-# Filter by MSRP Range (assumes the CSV has an 'MSRP' column)
-min_price = int(df["MSRP"].min())
-max_price = int(df["MSRP"].max())
-selected_price_range = st.sidebar.slider(
-    "Select MSRP Range",
-    min_value=min_price,
-    max_value=max_price,
-    value=(min_price, max_price),
-)
+# Get sidebar filter values
+(
+    api_key,
+    lease_terms,
+    lease_type,
+    selected_makes,
+    selected_years,
+    selected_models,
+    selected_trims,
+    selected_price_range,
+    tax_rate,
+    dmv_fee,
+    doc_fee,
+    bank_fee,
+) = sidebar_filters(df)
 
 
-with st.sidebar.expander("Taxes and Fees Options"):
-    tax_rate = st.text_input("% Tax Rate", value="8.875")
-    dmv_fee = st.text_input("DMV Fee", value="350")
-    doc_fee = st.text_input("Documentation Fee", value="249")
-    bank_fee = st.text_input("Bank Fee", value="595")
-
-
-# Convert inputs to float while handling empty or invalid values
-def parse_float(value, default):
-    try:
-        return float(value)
-    except ValueError:
-        return default
-
-
-tax_rate = parse_float(tax_rate, 8.875) * 0.01  # Convert percentage to decimal
-dmv_fee = parse_float(dmv_fee, 350)
-doc_fee = parse_float(doc_fee, 249)
-bank_fee = parse_float(bank_fee, 595)
 # -----------------------------
 # Apply Filters to CSV Data
 # -----------------------------
 filtered_data = df.copy()
 
-
-# Lease Computation for Each Entry
-def compute_lease(row, lease_term):
-    adjusted_cap_cost = row.get("Adjusted Cap Cost", 0)
-    residual_value = row.get(f"residual_value_{lease_term}", 0)
-    money_factor = row.get(f"MF {lease_term}", 0)
-    depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
-    fees_sum = dmv_fee + doc_fee
-    total_taxes = depreciation_fee * tax_rate * lease_term
-
-    tfu_net_cap_cost = residual_value + adjusted_cap_cost
-    base_monthly = depreciation_fee + (tfu_net_cap_cost * money_factor)
-    total_taxes = base_monthly * tax_rate * lease_term
-    option1_first = round(base_monthly + total_taxes + fees_sum + bank_fee, 2)
-    # st.write(
-    #     tfu_net_cap_cost,
-    #     residual_value,
-    #     adjusted_cap_cost,
-    #     depreciation_fee,
-    #     money_factor,
-    # )
-
-    # Option 2: LEASE TAX INCLUDED
-    lt_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes
-    monthly_lt_included = (
-        depreciation_fee + (lt_net_cap_cost * money_factor) + total_taxes / lease_term
-    )
-    option2_first = round(monthly_lt_included + fees_sum + bank_fee, 2)
-
-    # Option 3: TAXES AND BANK
-    tb_net_cap_cost = residual_value + adjusted_cap_cost + total_taxes + bank_fee
-    monthly_taxes_bank = (
-        depreciation_fee
-        + (tb_net_cap_cost * money_factor)
-        + (total_taxes + bank_fee) / lease_term
-    )
-    option3_first = round(monthly_taxes_bank + (dmv_fee + doc_fee), 2)
-
-    # Option 4: First Due
-    fd_net_cap_cost = (
-        residual_value + adjusted_cap_cost + total_taxes + bank_fee + fees_sum
-    )
-    monthly_first_due = (
-        depreciation_fee
-        + (fd_net_cap_cost * money_factor)
-        + (total_taxes + bank_fee + fees_sum) / lease_term
-    )
-    option4_first = round(monthly_first_due, 2)
-
-    # Option 5: SIGN AND DRIVE $0 DAS
-    if lease_term > 1:
-        sad_net_cap_cost = (
-            residual_value
-            + adjusted_cap_cost
-            + total_taxes
-            + bank_fee
-            + fees_sum
-            + monthly_first_due
-        )
-        monthly_sign_drive = (
-            depreciation_fee
-            + (sad_net_cap_cost * money_factor)
-            + (total_taxes + bank_fee + fees_sum + monthly_first_due) / (lease_term - 1)
-        )
-    else:
-        monthly_sign_drive = 0
-    option5_first = 0
-
-    # Option 6: ONEPAY
-    one_pay_monthly = depreciation_fee + (residual_value + adjusted_cap_cost) * (
-        money_factor - 0.0008
-    )
-    onepay_total = (
-        one_pay_monthly * lease_term
-        + one_pay_monthly * tax_rate * lease_term
-        + bank_fee
-        + fees_sum
-    )
-
-    if lease_type == "TAXES AND FEES UPFRONT":
-        return pd.Series([round(base_monthly, 2), option1_first])
-
-    elif lease_type == "LEASE TAX INCLUDED":
-        return pd.Series([round(monthly_lt_included, 2), option2_first])
-
-    elif lease_type == "TAXES AND BANK":
-        return pd.Series([round(monthly_taxes_bank, 2), option3_first])
-
-    elif lease_type == "First Due":
-        return pd.Series([round(monthly_first_due, 2), option4_first])
-
-    elif lease_type == "SIGN AND DRIVE $0 DAS":
-        return pd.Series([round(monthly_sign_drive, 2), 0])
-
-    elif lease_type == "ONEPAY":
-        return pd.Series([round(0, 2), onepay_total])
-    else:
-        return pd.Series([round(base_monthly, 2), option1_first])
-
-
+# Apply lease computation
 for lease_term in lease_terms:
     filtered_data[[f"Monthly Payment_{lease_term}", f"Due at Signing_{lease_term}"]] = (
-        filtered_data.apply(lambda x: compute_lease(x, lease_term), axis=1)
+        filtered_data.apply(
+            lambda x: compute_lease(
+                x, lease_term, tax_rate, dmv_fee, doc_fee, bank_fee, lease_type
+            ),
+            axis=1,
+        )
     )
+
 
 if selected_makes:
     filtered_data = filtered_data[filtered_data["Make"].isin(selected_makes)]
@@ -529,54 +372,8 @@ if not filtered_data.empty:
                 st.table(lease_df)
 
 
-# Function to fetch API data (cached)
-@st.cache_data
-def fetch_car_data(
-    api_key,
-    selected_year,
-    selected_make,
-    selected_model,
-    zip_code,
-    radius,
-    msrp_range,
-    dealer_type,
-    preferred_dealers_only,
-):
-    BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}"
-
-    params = {}
-    if selected_year:
-        params["year"] = selected_year
-    if selected_make:
-        params["make"] = selected_make.lower()
-    if selected_model:
-        params["model"] = selected_model.lower()
-    if zip_code:
-        params["zip"] = zip_code
-    if radius:
-        params["radius"] = radius
-    params["msrp_range"] = msrp_range
-    if dealer_type:
-        params["dealer_type"] = dealer_type
-    if preferred_dealers_only:
-        params["preferred_dealers_only"] = True
-
-    response = requests.get(BASE_URL, params=params)
-
-    if response.status_code == 200:
-        data = response.json().get("listings", [])
-        return pd.DataFrame(data) if data else None
-    else:
-        st.error(f"Error fetching data from API. Status Code: {response.status_code}")
-        return None
-
-
 # --- Suggested Cars Section ---
 st.markdown("## 3. Suggested Cars (from API)")
-dealer_type = st.sidebar.selectbox(
-    "Dealer Type", options=["franchise", "independent"], index=0
-)
-preferred_dealers_only = st.sidebar.checkbox("Preferred Dealers Only", value=False)
 zip_code = st.sidebar.text_input("ZIP Code", "")
 radius = st.sidebar.number_input("Radius (miles)", min_value=1)
 msrp_values = st.sidebar.number_input("MSRP range from selected config", min_value=100)
@@ -585,7 +382,6 @@ msrp_range = (
 )
 
 if api_key:
-
     with st.spinner("Fetching suggested cars..."):
         api_df = fetch_car_data(
             api_key,
@@ -595,8 +391,6 @@ if api_key:
             zip_code,
             radius,
             msrp_range,
-            dealer_type,
-            preferred_dealers_only,
         )
 
         if api_df is not None:
@@ -607,11 +401,10 @@ if api_key:
                     [api_df.drop(columns=["build"]), build_expanded], axis=1
                 )
 
-            # Sort by MSRP
+            # Sort by MSRP if available
             if "msrp" in api_df.columns:
                 api_df.sort_values(by="msrp", inplace=True, na_position="last")
 
-            # Store data in session state
             st.session_state["api_df"] = api_df
         else:
             st.session_state["api_df"] = None
@@ -696,37 +489,9 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "dealer_zip",
     ]
 
-    # Add extracted media column
-
-    # display_columns.append("first_media_photo")
-
-    # # Ensure columns exist in DataFrame
-    # existing_columns = [col for col in display_columns if col in api_df.columns]
-
     # Display DataFrame
     st.dataframe(api_df[display_columns])
 
-    # for i, row in api_df.iterrows():
-    #     st.write(f"### {row['year']} {row['make']} {row['model']} - {row['trim']}")
-
-    #     # Display all other columns as key-value pairs
-    #     cols_to_show = "\n".join(
-    #         [
-    #             f"**{col.replace('_', ' ').title()}**: {row[col]}"
-    #             for col in existing_columns
-    #         ]
-    #     )
-    #     st.markdown(cols_to_show)
-
-    #     # Display image as clickable
-    #     if row["first_media_photo"]:
-    #         st.markdown(
-    #             f'<a href="{row["first_media_photo"]}" target="_blank">'
-    #             f'<img src="{row["first_media_photo"]}" width="200"></a>',
-    #             unsafe_allow_html=True,
-    #         )
-
-    #     st.write("---")  # Divider between entries
 
 # -----------------------------
 # Footer / Contact Information
