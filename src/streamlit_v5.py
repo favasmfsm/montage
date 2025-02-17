@@ -548,8 +548,8 @@ def fetch_car_data(
     if radius:
         params["radius"] = radius
     params["msrp_range"] = msrp_range
-    print(params)
-    st.write(params)
+    print(params, selected_config)
+    st.write(params, selected_config)
     response = requests.get(BASE_URL, params=params)
 
     if response.status_code == 200:
