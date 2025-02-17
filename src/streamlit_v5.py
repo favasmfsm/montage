@@ -540,9 +540,9 @@ def fetch_car_data(
     if selected_years:
         params["year"] = selected_year
     if selected_makes:
-        params["make"] = selected_make
+        params["make"] = selected_make.lower()
     if selected_models:
-        params["model"] = selected_model
+        params["model"] = selected_model.lower()
     if zip_code:
         params["zip"] = zip_code
     if radius:
@@ -666,7 +666,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "transmission",
         "drivetrain",
         "fuel_type",
-        "engine",
+        # "engine",
         "heading",
         "msrp",
         "price",
