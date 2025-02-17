@@ -537,11 +537,11 @@ def fetch_car_data(
     BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}"
 
     params = {}
-    if selected_years:
+    if selected_year:
         params["year"] = selected_year
-    if selected_makes:
+    if selected_make:
         params["make"] = selected_make.lower()
-    if selected_models:
+    if selected_model:
         params["model"] = selected_model.lower()
     if zip_code:
         params["zip"] = zip_code
