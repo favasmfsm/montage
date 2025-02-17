@@ -568,37 +568,36 @@ msrp_range = (
     f"{selected_config['MSRP']-msrp_values}-{selected_config['MSRP']+msrp_values}"
 )
 
-if st.button("Fetch Suggested Cars"):
-    if api_key:
+if api_key:
 
-        with st.spinner("Fetching suggested cars..."):
-            api_df = fetch_car_data(
-                api_key,
-                int(selected_config["Year"]),
-                selected_config["Make"],
-                selected_config["Model"],
-                zip_code,
-                radius,
-                msrp_range,
-            )
+    with st.spinner("Fetching suggested cars..."):
+        api_df = fetch_car_data(
+            api_key,
+            int(selected_config["Year"]),
+            selected_config["Make"],
+            selected_config["Model"],
+            zip_code,
+            radius,
+            msrp_range,
+        )
 
-            if api_df is not None:
-                # Expand "build" column if present
-                if "build" in api_df.columns:
-                    build_expanded = api_df["build"].apply(pd.Series)
-                    api_df = pd.concat(
-                        [api_df.drop(columns=["build"]), build_expanded], axis=1
-                    )
+        if api_df is not None:
+            # Expand "build" column if present
+            if "build" in api_df.columns:
+                build_expanded = api_df["build"].apply(pd.Series)
+                api_df = pd.concat(
+                    [api_df.drop(columns=["build"]), build_expanded], axis=1
+                )
 
-                # Sort by MSRP
-                if "msrp" in api_df.columns:
-                    api_df.sort_values(by="msrp", inplace=True, na_position="last")
+            # Sort by MSRP
+            if "msrp" in api_df.columns:
+                api_df.sort_values(by="msrp", inplace=True, na_position="last")
 
-                # Store data in session state
-                st.session_state["api_df"] = api_df
-            else:
-                st.session_state["api_df"] = None
-                st.info("No suggested cars found from API with the given parameters.")
+            # Store data in session state
+            st.session_state["api_df"] = api_df
+        else:
+            st.session_state["api_df"] = None
+            st.info("No suggested cars found from API with the given parameters.")
 
 # Retain fetched data in session state
 if "api_df" in st.session_state and st.session_state["api_df"] is not None:
