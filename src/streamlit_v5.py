@@ -118,9 +118,7 @@ def compute_lease(row, lease_term):
     money_factor = row.get(f"MF {lease_term}", 0)
     depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
     fees_sum = dmv_fee + doc_fee
-    st.write(
-        adjusted_cap_cost, residual_value, money_factor, depreciation_fee, fees_sum
-    )
+    st.write(row)
 
     tfu_net_cap_cost = residual_value + adjusted_cap_cost
     base_monthly = depreciation_fee + (tfu_net_cap_cost * money_factor)
