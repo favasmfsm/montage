@@ -30,6 +30,14 @@ lease_terms = st.sidebar.multiselect(
     "Select Lease Term (months)", options=[24, 27, 30, 33, 36, 39, 42, 48], default=36
 )  # default is 36 months
 
+miles_map = {
+    "15K miles": {24: 0, 27: 0, 30: 0, 33: 0, 36: 0, 39: 0, 42: 0, 48: 0},
+    "12K miles": {24: 1, 27: 1, 30: 1, 33: 1, 36: 2, 39: 2, 42: 2, 48: 2},
+    "10K miles": {24: 2, 27: 2, 30: 2, 33: 2, 36: 3, 39: 3, 42: 3, 48: 3},
+    "7.5K miles": {24: 3, 27: 3, 30: 3, 33: 3, 36: 4, 39: 4, 42: 4, 48: 4},
+}
+
+
 # Lease Type Selection
 lease_type = st.sidebar.selectbox(
     "Select Lease Type",
@@ -42,6 +50,13 @@ lease_type = st.sidebar.selectbox(
         "ONEPAY",
     ],
 )
+
+miles = st.sidebar.selectbox(
+    "Select Miles Limit",
+    ["15K miles", "12K miles", "10K miles", "7.5K miles"],
+)
+
+
 # Filter by Make
 make_options = sorted(df["Make"].dropna().unique())
 selected_makes = st.sidebar.multiselect("Select Make", options=make_options, default=[])
@@ -212,7 +227,9 @@ def compute_lease(row, lease_term):
 
 for lease_term in lease_terms:
     filtered_data[f"residual_value_{lease_term}"] = (
-        filtered_data["MSRP"] * filtered_data[f"RP {lease_term}"] * 0.01
+        filtered_data["MSRP"]
+        * (filtered_data[f"RP {lease_term}"] + miles_map[miles][lease_term])
+        * 0.01
     )
 for lease_term in lease_terms:
     filtered_data[[f"Monthly Payment_{lease_term}", f"Due at Signing_{lease_term}"]] = (
