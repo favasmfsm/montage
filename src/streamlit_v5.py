@@ -542,33 +542,57 @@ def fetch_car_data(
     msrp_range,
     dealer_type,
     preferred_dealers_only,
+    max_results=500,  # Limit total results to prevent excessive API calls
+    rows_per_page=50,  # Fetch 50 results per request
 ):
     BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}"
 
-    params = {}
-    if selected_year:
-        params["year"] = selected_year
-    if selected_make:
-        params["make"] = selected_make.lower()
-    if selected_model:
-        params["model"] = selected_model.lower()
-    if zip_code:
-        params["zip"] = zip_code
-    if radius:
-        params["radius"] = radius
-    params["msrp_range"] = msrp_range
-    if dealer_type:
-        params["dealer_type"] = dealer_type
-    if preferred_dealers_only:
-        params["preferred_dealers_only"] = True
+    params = {
+        "year": selected_year,
+        "make": selected_make.lower() if selected_make else None,
+        "model": selected_model.lower() if selected_model else None,
+        "zip": zip_code,
+        "radius": radius,
+        "msrp_range": msrp_range,
+        "dealer_type": dealer_type,
+        "preferred_dealers_only": True if preferred_dealers_only else None,
+    }
 
-    response = requests.get(BASE_URL, params=params)
+    # Remove keys with None values
+    params = {k: v for k, v in params.items() if v is not None}
 
-    if response.status_code == 200:
+    all_data = []
+    start = 0
+    total_fetched = 0
+
+    while total_fetched < max_results:
+        params["start"] = start
+        params["rows"] = rows_per_page
+
+        response = requests.get(BASE_URL, params=params)
+
+        if response.status_code != 200:
+            st.error(
+                f"Error fetching data from API. Status Code: {response.status_code}"
+            )
+            break
+
         data = response.json().get("listings", [])
-        return pd.DataFrame(data) if data else None
+
+        if not data:
+            break  # No more listings available
+
+        all_data.extend(data)
+        total_fetched += len(data)
+
+        if len(data) < rows_per_page:
+            break  # Last page reached
+
+        start += rows_per_page
+
+    if all_data:
+        return pd.DataFrame(all_data)
     else:
-        st.error(f"Error fetching data from API. Status Code: {response.status_code}")
         return None
 
 
