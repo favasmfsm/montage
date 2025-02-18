@@ -118,7 +118,6 @@ def compute_lease(row, lease_term):
     money_factor = row.get(f"MF {lease_term}", 0)
     depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
     fees_sum = dmv_fee + doc_fee
-    total_taxes = depreciation_fee * tax_rate * lease_term
 
     tfu_net_cap_cost = residual_value + adjusted_cap_cost
     base_monthly = depreciation_fee + (tfu_net_cap_cost * money_factor)
@@ -248,13 +247,13 @@ else:
     display_cols = [
         col
         for col in [
+            "MSRP",
             "Year",
             "Make",
             "Model",
             "Trim",
             "Style",
             "Bank",
-            "MSRP",
             # "Monthly Payment",
             # "First Payment",
             "Total_Rebates",
@@ -579,7 +578,7 @@ dealer_type = st.sidebar.selectbox(
 preferred_dealers_only = st.sidebar.checkbox("Preferred Dealers Only", value=False)
 zip_code = st.sidebar.text_input("ZIP Code", "")
 radius = st.sidebar.number_input("Radius (miles)", min_value=1)
-msrp_values = st.sidebar.number_input("MSRP range from selected config", min_value=100)
+msrp_values = st.sidebar.number_input("MSRP range from selected config", min_value=2000)
 msrp_range = (
     f"{selected_config['MSRP']-msrp_values}-{selected_config['MSRP']+msrp_values}"
 )
@@ -675,9 +674,9 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "make",
         "model",
         "trim",
-        "version",
+        # "version",
         "body_type",
-        "vehicle_type",
+        # "vehicle_type",
         "dom",
         "vin",
         "transmission",
