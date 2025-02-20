@@ -627,8 +627,8 @@ dealer_type = st.sidebar.selectbox(
     "Dealer Type", options=["franchise", "independent"], index=0
 )
 preferred_dealers_only = st.sidebar.checkbox("Preferred Dealers Only", value=False)
-zip_code = st.sidebar.text_input("ZIP Code", "")
-radius = st.sidebar.number_input("Radius (miles)", min_value=1)
+zip_code = st.sidebar.text_input("ZIP Code", "11223")
+radius = st.sidebar.number_input("Radius (miles)", min_value=100)
 msrp_values = st.sidebar.number_input("MSRP range from selected config", min_value=2000)
 msrp_range = (
     f"{selected_config['MSRP']-msrp_values}-{selected_config['MSRP']+msrp_values}"
