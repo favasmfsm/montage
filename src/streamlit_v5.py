@@ -720,7 +720,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         api_df = api_df[api_df["dealer_type"].isin(selected_dealer_type)]
 
     if preferred_dealers_only:
-        output_df = api_df[api_df.dealer_name.isin(dealer_df["Name"])]
+        api_df = api_df[api_df.dealer_name.isin(dealer_df["Name"])]
 
     # Define display columns
     display_columns = [
@@ -750,7 +750,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     ]
 
     # Display DataFrame
-    st.dataframe(output_df[display_columns])
+    st.dataframe(api_df[display_columns])
 
 
 # -----------------------------
