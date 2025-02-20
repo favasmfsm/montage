@@ -335,7 +335,9 @@ if not filtered_data.empty:
                 # Extract values from the selected configuration
                 msrp = selected_config["MSRP"]
                 adjusted_cap_cost = selected_config["Adjusted Cap Cost"]
-                residual_percentage = selected_config[rp_column]  # e.g., 50 for 50%
+                residual_percentage = (
+                    selected_config[rp_column] + miles_map[miles][lease_term]
+                )  # e.g., 50 for 50%
                 money_factor = selected_config[mf_column]
                 residual_value = msrp * residual_percentage * 0.01
 
