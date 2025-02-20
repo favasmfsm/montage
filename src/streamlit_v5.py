@@ -570,7 +570,7 @@ def fetch_car_data(
     max_results=500,  # Limit total results to prevent excessive API calls
     rows_per_page=50,  # Fetch 50 results per request
 ):
-    BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}"
+    BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}&car_type=new"
 
     params = {
         "year": selected_year,
