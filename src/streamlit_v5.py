@@ -130,7 +130,7 @@ bank_fee = parse_float(bank_fee, 595)
 # -----------------------------
 # Apply Filters to CSV Data
 # -----------------------------
-filtered_data = df.copy()
+filtered_data = temp_df.copy()
 
 
 # Lease Computation for Each Entry
