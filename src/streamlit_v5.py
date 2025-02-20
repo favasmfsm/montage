@@ -61,6 +61,7 @@ miles = st.sidebar.selectbox(
 make_options = sorted(df["Make"].dropna().unique())
 selected_makes = st.sidebar.multiselect("Select Make", options=make_options, default=[])
 
+
 # Filter by Year
 year_options = sorted(df["Year"].dropna().unique())
 selected_years = st.sidebar.multiselect("Select Year", options=year_options, default=[])
@@ -77,10 +78,16 @@ model_options = sorted(temp_df["Model"].dropna().unique())
 selected_models = st.sidebar.multiselect(
     "Select Model", options=model_options, default=[]
 )
-
 # Apply Model filter if selected
 if selected_models:
     temp_df = temp_df[temp_df["Model"].isin(selected_models)]
+
+body_type_options = sorted(temp_df["body_type"].dropna().unique())
+selected_body_types = st.sidebar.multiselect(
+    "Select Body Type", options=body_type_options, default=[]
+)
+if selected_body_types:
+    temp_df = temp_df[temp_df["body_type"].isin(selected_body_types)]
 
 # Trim filter (Show all initially)
 trim_options = sorted(temp_df["Trim"].dropna().unique())
@@ -272,6 +279,7 @@ else:
             "Model",
             "Trim",
             "Style",
+            "body_type",
             "Bank",
             # "Monthly Payment",
             # "First Payment",
@@ -572,7 +580,7 @@ def fetch_car_data(
         "radius": radius,
         "msrp_range": msrp_range,
         "dealer_type": dealer_type,
-        "preferred_dealers_only": True if preferred_dealers_only else None,
+        # "preferred_dealers_only": True if preferred_dealers_only else None,
     }
 
     # Remove keys with None values
@@ -658,7 +666,7 @@ if api_key:
         else:
             st.session_state["api_df"] = None
             st.info("No suggested cars found from API with the given parameters.")
-
+dealer_df = pd.read_csv("./output/prefered_dealer_names.csv")
 # Retain fetched data in session state
 if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     api_df = st.session_state["api_df"]
@@ -711,6 +719,9 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     if selected_dealer_type:
         api_df = api_df[api_df["dealer_type"].isin(selected_dealer_type)]
 
+    if preferred_dealers_only:
+        output_df = api_df[api_df.dealer_name.isin(dealer_df["Name"])]
+
     # Define display columns
     display_columns = [
         "year",
@@ -739,7 +750,7 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     ]
 
     # Display DataFrame
-    st.dataframe(api_df[display_columns])
+    st.dataframe(output_df[display_columns])
 
 
 # -----------------------------
