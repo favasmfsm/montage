@@ -1,0 +1,413 @@
+Package,Rate Model,Bank,MSRP,Invoice,Formula,Buying,Selling Price_36,Selling Price,Default Rebates,Nondefault Rebates,Default Rebates_36,Total_Rebates,Adjusted Cap Cost,Trim,MF 24,RP 24,MF 27,RP 27,MF 30,RP 30,MF 33,RP 33,MF 36,RP 36,MF 39,RP 39,MF 42,RP 42,MF 48,RP 48,Package Id,Bank Id,car_details,Year,Make,Model,Style,body_type,drive_train,code
+2024 Acura ZDX AWD SUV,ZDX AWD,American Honda Finance (Acura),70450,69208,0.98237,0,69208,69208,,,"Clean Vehicle Lease Credit (7,500)
+Captive Lease Offer (7,200)
+Dealer / Lease / Finance Cash (5,500)
+Regional Captive Lease Offer (1,650)
+Total: 21,850
+link",21850,47358,3B2H4REW 4dr Wgn A-Spec,0.0012,48.0,0.0012,47.0,0.0012,45.0,0.0012,43.0,0.0012,41,0.0028,39,0.00295,36.0,0.00295,31.0,70563,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""ZDX"",
+  ""year"": 2024,
+  ""trim"": ""A-Spec"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,ZDX,A-Spec,SUV,AWD,3B2H4REW
+2024 Acura ZDX AWD SUV,ZDX AWD,American Honda Finance (Acura),75450,73970,0.980384,0,73970,73970,,,"Clean Vehicle Lease Credit (7,500)
+Captive Lease Offer (7,200)
+Dealer / Lease / Finance Cash (2,000)
+Regional Captive Lease Offer (1,650)
+Total: 18,350
+link",18350,55620,3B2H6REW 4dr Wgn Type S,0.0012,47.0,0.0012,46.0,0.0012,44.0,0.0012,42.0,0.0012,40,0.0028,38,0.00295,35.0,0.00295,30.0,70564,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""ZDX"",
+  ""year"": 2024,
+  ""trim"": ""Type S"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,ZDX,Type S,SUV,AWD,3B2H6REW
+2024 Acura Integra Hatchback,Integra,American Honda Finance (Acura),37695,36241,0.961427,-600,36841,35641,,,"Acura Lease Cash (0)
+Total: 0
+link",0,35641,DE4G7RJW 5dr HB A-Spec Tech Package MT,0.0038,58.0,0.0038,57.0,0.0038,55.0,0.0028,53.0,0.0028,51,0.0028,49,0.00295,46.0,0.00295,41.0,59914,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2024,
+  ""trim"": ""A-Spec Tech Package"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""MT""
+}",2024,Acura,Integra,A-Spec Tech Package,Hatchback,MT,DE4G7RJW
+2025 Acura Integra Hatchback,Integra,American Honda Finance (Acura),39195,37689,0.961577,0,37689,37689,,,"Captive Lease Offer (350)
+Acura Lease Cash (0)
+Total: 350
+link",350,37339,DE4G7SJW 5dr HB A-Spec Tech Package MT,0.0018,62.0,0.0018,61.0,0.0018,59.0,0.0018,57.0,0.0018,55,0.0018,53,0.0018,51.0,0.0018,47.0,72036,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2025,
+  ""trim"": ""A-Spec Tech Package"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""MT""
+}",2025,Acura,Integra,A-Spec Tech Package,Hatchback,MT,DE4G7SJW
+2024 Acura Integra Hatchback,Integra,American Honda Finance (Acura),32695,31907,0.975898,-200,32107,31707,,,"Acura Lease Cash (0)
+Total: 0
+link",0,31707,base,0.0038,60.0,0.0038,59.0,0.0038,57.0,0.0028,55.0,0.0028,53,0.0028,51,0.00295,48.0,0.00295,43.0,59911,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2024,
+  ""trim"": ""AT"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""FWD""
+}",2024,Acura,Integra,AT,Hatchback,FWD,DE4H2RJW
+2025 Acura Integra Hatchback,Integra,American Honda Finance (Acura),34195,33377,0.976078,0,33377,33377,,,"Captive Lease Offer (350)
+Acura Lease Cash (0)
+Total: 350
+link",350,33027,base,0.0018,63.0,0.0018,62.0,0.0018,60.0,0.0018,58.0,0.0018,56,0.0018,54,0.0018,52.0,0.0018,48.0,72033,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2025,
+  ""trim"": ""AT"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": null
+}",2025,Acura,Integra,AT,Hatchback,,DE4H2SJW
+2024 Acura Integra Hatchback,Integra,American Honda Finance (Acura),34695,33366,0.961695,-200,33566,33166,,,"Acura Lease Cash (0)
+Total: 0
+link",0,33166,DE4H3RJW 5dr HB A-Spec Package AT,0.0038,58.0,0.0038,57.0,0.0038,55.0,0.0028,53.0,0.0028,51,0.0028,49,0.00295,46.0,0.00295,41.0,59913,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2024,
+  ""trim"": ""A-Spec Package"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""AT""
+}",2024,Acura,Integra,A-Spec Package,Hatchback,AT,DE4H3RJW
+2025 Acura Integra Hatchback,Integra,American Honda Finance (Acura),36195,34864,0.963227,0,34864,34864,,,"Captive Lease Offer (350)
+Acura Lease Cash (0)
+Total: 350
+link",350,34514,DE4H3SJW 5dr HB A-Spec Package AT,0.0018,62.0,0.0018,61.0,0.0018,59.0,0.0018,57.0,0.0018,55,0.0018,53,0.0018,51.0,0.0018,47.0,72032,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2025,
+  ""trim"": ""A-Spec Package"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""AT""
+}",2025,Acura,Integra,A-Spec Package,Hatchback,AT,DE4H3SJW
+2024 Acura Integra Hatchback,Integra,American Honda Finance (Acura),37695,36241,0.961427,-600,36841,35641,,,"Acura Lease Cash (0)
+Total: 0
+link",0,35641,DE4H6RJW 5dr HB A-Spec Tech Package AT,0.0038,58.0,0.0038,57.0,0.0038,55.0,0.0028,53.0,0.0028,51,0.0028,49,0.00295,46.0,0.00295,41.0,59915,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2024,
+  ""trim"": ""A-Spec Tech Package"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""AT""
+}",2024,Acura,Integra,A-Spec Tech Package,Hatchback,AT,DE4H6RJW
+2025 Acura Integra Hatchback,Integra,American Honda Finance (Acura),39195,37689,0.961577,0,37689,37689,,,"Captive Lease Offer (350)
+Acura Lease Cash (0)
+Total: 350
+link",350,37339,DE4H6SJW 5dr HB A-Spec Tech Package AT,0.0018,62.0,0.0018,61.0,0.0018,59.0,0.0018,57.0,0.0018,55,0.0018,53,0.0018,51.0,0.0018,47.0,72034,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2025,
+  ""trim"": ""A-Spec Tech Package"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""AT""
+}",2025,Acura,Integra,A-Spec Tech Package,Hatchback,AT,DE4H6SJW
+2025 Acura Integra Hatchback,Integra,American Honda Finance (Acura),54695,52594,0.961587,0,52594,52594,,,"Captive Lease Offer (350)
+Acura Lease Cash (0)
+Total: 350
+link",350,52244,DE5G9SEW 5dr HB Type S MT,0.0038,68.0,0.0038,67.0,0.0038,65.0,0.0028,63.0,0.0028,61,0.0028,59,0.00295,57.0,0.00295,53.0,78779,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""Integra"",
+  ""year"": 2025,
+  ""trim"": ""Type S"",
+  ""body_type"": ""Hatchback"",
+  ""drive_train"": ""MT""
+}",2025,Acura,Integra,Type S,Hatchback,MT,DE5G9SEW
+2024 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),45245,43853,0.969234,-1800,45653,42053,,,"Acura Lease Cash (0)
+Total: 0
+link",0,42053,base,0.0038,58.0,0.0038,57.0,0.0038,55.0,0.0028,53.0,0.0028,51,0.0028,49,0.00295,47.0,0.00295,43.0,65526,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2024,
+  ""trim"": ""AWD"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,RDX,AWD,SUV,AWD,TC2H3RJNW
+2025 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),46050,44917,0.975396,-1000,45917,43917,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,41017,base,0.00204,63.0,0.00204,62.0,0.00204,60.0,0.00204,58.0,0.00204,56,0.00204,54,0.00204,52.0,0.00204,48.0,76831,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2025,
+  ""trim"": ""AWD"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,RDX,AWD,SUV,AWD,TC2H4SJNW
+2024 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),47895,45670,0.953544,-1800,47470,43870,,,"Acura Lease Cash (0)
+Total: 0
+link",0,43870,TC2H5RKNW 4dr Wgn Tech AWD,0.0038,56.0,0.0038,55.0,0.0038,53.0,0.0028,51.0,0.0028,49,0.0028,47,0.00295,45.0,0.00295,41.0,65527,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2024,
+  ""trim"": ""Tech AWD"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,RDX,Tech AWD,SUV,AWD,TC2H5RKNW
+2025 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),48650,46379,0.95332,-1000,47379,45379,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,42479,TC2H5SKNW 4dr Wgn Tech AWD,0.00204,62.0,0.00204,61.0,0.00204,59.0,0.00204,57.0,0.00204,55,0.00204,53,0.00204,51.0,0.00204,47.0,76832,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2025,
+  ""trim"": ""Tech"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,RDX,Tech,SUV,AWD,TC2H5SKNW
+2024 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),50895,48418,0.951331,-1800,50218,46618,,,"Acura Lease Cash (0)
+Total: 0
+link",0,46618,TC2H6RKNW 4dr Wgn A-Spec AWD,0.0038,56.0,0.0038,55.0,0.0038,53.0,0.0028,51.0,0.0028,49,0.0028,47,0.00295,45.0,0.00295,41.0,65528,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2024,
+  ""trim"": ""A-Spec"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,RDX,A-Spec,SUV,AWD,TC2H6RKNW
+2025 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),51650,49135,0.951307,-1000,50135,48135,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,45235,TC2H6SKNW 4dr Wgn A-Spec AWD,0.00204,61.0,0.00204,60.0,0.00204,58.0,0.00204,56.0,0.00204,54,0.00204,52,0.00204,50.0,0.00204,46.0,76833,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2025,
+  ""trim"": ""A-Spec"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,RDX,A-Spec,SUV,AWD,TC2H6SKNW
+2024 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),53045,50349,0.949175,-1800,52149,48549,,,"Acura Lease Cash (0)
+Total: 0
+link",0,48549,TC2H7RKNW 4dr Wgn Advance AWD,0.0038,55.0,0.0038,54.0,0.0038,52.0,0.0028,50.0,0.0028,48,0.0028,46,0.00295,44.0,0.00295,40.0,65535,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2024,
+  ""trim"": ""Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,RDX,Advance,SUV,AWD,TC2H7RKNW
+2025 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),53800,51072,0.949294,-1000,52072,50072,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,47172,TC2H7SKNW 4dr Wgn Advance AWD,0.00204,60.0,0.00204,59.0,0.00204,57.0,0.00204,55.0,0.00204,53,0.00204,51,0.00204,49.0,0.00204,45.0,76834,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2025,
+  ""trim"": ""Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,RDX,Advance,SUV,AWD,TC2H7SKNW
+2024 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),55045,52240,0.949042,-1800,54040,50440,,,"Acura Lease Cash (0)
+Total: 0
+link",0,50440,TC2H8RKNW 4dr Wgn A-Spec Advance AWD,0.0038,55.0,0.0038,54.0,0.0038,52.0,0.0028,50.0,0.0028,48,0.0028,46,0.00295,44.0,0.00295,40.0,65530,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2024,
+  ""trim"": ""A-Spec Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,RDX,A-Spec Advance,SUV,AWD,TC2H8RKNW
+2025 Acura RDX AWD SUV,RDX AWD,American Honda Finance (Acura),56400,53540,0.949291,-1000,54540,52540,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,49640,TC2H8SKNW 4dr Wgn A-Spec Advance AWD,0.00204,60.0,0.00204,59.0,0.00204,57.0,0.00204,55.0,0.00204,53,0.00204,51,0.00204,49.0,0.00204,45.0,78778,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""RDX"",
+  ""year"": 2025,
+  ""trim"": ""A-Spec Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,RDX,A-Spec Advance,SUV,AWD,TC2H8SKNW
+2024 Acura TLX FWD Sedan,TLX FWD,American Honda Finance (Acura),46795,44628,0.953692,400,44228,45028,,,"Acura Lease Cash (0)
+Total: 0
+link",0,45028,UB5F4RGNW 4dr Sdn Tech,0.0038,55.0,0.0038,54.0,0.0038,52.0,0.0028,50.0,0.0028,48,0.0028,46,0.00295,44.0,0.00295,40.0,67492,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""TLX"",
+  ""year"": 2024,
+  ""trim"": ""Tech"",
+  ""body_type"": ""Sedan"",
+  ""drive_train"": ""FWD""
+}",2024,Acura,TLX,Tech,Sedan,FWD,UB5F4RGNW
+2025 Acura TLX FWD Sedan,TLX FWD,American Honda Finance (Acura),47195,44988,0.953237,0,44988,44988,,,"Acura Lease Cash (0)
+Total: 0
+link",0,44988,UB5F4SGNW 4dr Sdn Tech,0.00191,59.0,0.00191,58.0,0.00191,56.0,0.00191,54.0,0.00191,52,0.00191,50,0.00191,48.0,0.00191,44.0,78348,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""TLX"",
+  ""year"": 2025,
+  ""trim"": ""Tech"",
+  ""body_type"": ""Sedan"",
+  ""drive_train"": ""FWD""
+}",2025,Acura,TLX,Tech,Sedan,FWD,UB5F4SGNW
+2024 Acura TLX AWD Sedan,TLX AWD,American Honda Finance (Acura),51795,49117,0.948296,400,48717,49517,,,"Acura Lease Cash (0)
+Total: 0
+link",0,49517,UB6F5RGNW 4dr Sdn A-Spec AWD,0.0038,55.0,0.0038,54.0,0.0038,52.0,0.0028,50.0,0.0028,48,0.0028,46,0.00295,44.0,0.00295,40.0,67489,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""TLX"",
+  ""year"": 2024,
+  ""trim"": ""A-Spec"",
+  ""body_type"": ""Sedan"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,TLX,A-Spec,Sedan,AWD,UB6F5RGNW
+2025 Acura TLX AWD Sedan,TLX AWD,American Honda Finance (Acura),52195,49647,0.951183,0,49647,49647,,,"Acura Lease Cash (0)
+Total: 0
+link",0,49647,UB6F5SGNW 4dr Sdn A-Spec AWD,0.00191,57.0,0.00191,56.0,0.00191,54.0,0.00191,52.0,0.00191,50,0.00191,48,0.00191,46.0,0.00191,42.0,78349,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""TLX"",
+  ""year"": 2025,
+  ""trim"": ""A-Spec"",
+  ""body_type"": ""Sedan"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,TLX,A-Spec,Sedan,AWD,UB6F5SGNW
+2024 Acura TLX AWD Sedan,TLX AWD,American Honda Finance (Acura),58795,55796,0.948992,0,55796,55796,,,"Acura Lease Cash (0)
+Total: 0
+link",0,55796,UB7F0RGW 4dr Sdn Type S AWD,0.0038,55.0,0.0038,54.0,0.0038,52.0,0.0028,50.0,0.0028,48,0.0028,46,0.00295,44.0,0.00295,40.0,67491,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""TLX"",
+  ""year"": 2024,
+  ""trim"": ""Type S"",
+  ""body_type"": ""Sedan"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,TLX,Type S,Sedan,AWD,UB7F0RGW
+2024 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),75750,71140,0.939142,0,71140,71140,,,"Acura Lease Cash (0)
+Total: 0
+link",0,71140,YD8H8RKNW 4dr Wgn Type-S Advance,0.0038,53.0,0.0038,52.0,0.0038,50.0,0.0028,48.0,0.0028,46,0.0028,44,0.00295,42.0,0.00295,38.0,65538,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2024,
+  ""trim"": ""Type-S Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,MDX,Type-S Advance,SUV,AWD,YD8H8RKNW
+2025 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),76900,72209,0.938999,-1500,73709,70709,,,"Acura Lease Cash (0)
+Total: 0
+link",0,70709,YD8H8SKNW 4dr Wgn Type-S Advance,0.00174,58.0,0.00174,57.0,0.00174,55.0,0.00174,53.0,0.00174,51,0.00174,49,0.00174,47.0,0.00174,43.0,72037,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2025,
+  ""trim"": ""Type-S Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,MDX,Type-S Advance,SUV,AWD,YD8H8SKNW
+2024 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),70400,66122,0.939233,0,66122,66122,,,"Acura Lease Cash (0)
+Total: 0
+link",0,66122,YD8H9RKNW 4dr Wgn Type-S,0.0038,53.0,0.0038,52.0,0.0038,50.0,0.0028,48.0,0.0028,46,0.0028,44,0.00295,42.0,0.00295,38.0,65537,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2024,
+  ""trim"": ""Type-S"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,MDX,Type-S,SUV,AWD,YD8H9RKNW
+2025 Acura MDX 2WD 7 Passenger,MDX 2WD,American Honda Finance (Acura),58250,54830,0.941288,-1300,56130,53530,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,50630,YD9H4SKNW 4dr Wgn Tech,0.00174,61.0,0.00174,60.0,0.00174,58.0,0.00174,56.0,0.00174,54,0.00174,52,0.00174,50.0,0.00174,46.0,72035,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2025,
+  ""trim"": ""Tech"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""2WD""
+}",2025,Acura,MDX,Tech,SUV,2WD,YD9H4SKNW
+2024 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),62500,58833,0.941328,0,58833,58833,,,"Acura Lease Cash (0)
+Total: 0
+link",0,58833,YE1H0RKNW 4dr Wgn Tech A-Spec,0.0038,56.0,0.0038,55.0,0.0038,53.0,0.0028,51.0,0.0028,49,0.0028,47,0.00295,45.0,0.00295,41.0,60825,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2024,
+  ""trim"": ""Tech A-Spec"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,MDX,Tech A-Spec,SUV,AWD,YE1H0RKNW
+2025 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),63450,59726,0.941308,-1500,61226,58226,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,55326,YE1H0SKNW 4dr Wgn Tech A-Spec,0.00174,61.0,0.00174,60.0,0.00174,58.0,0.00174,56.0,0.00174,54,0.00174,52,0.00174,50.0,0.00174,46.0,70561,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2025,
+  ""trim"": ""Tech A-Spec"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,MDX,Tech A-Spec,SUV,AWD,YE1H0SKNW
+2024 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),53845,52957,0.983508,0,52957,52957,,,"Acura Lease Cash (0)
+Total: 0
+link",0,52957,YE1H3RJNW 4dr Wgn,0.0038,56.0,0.0038,55.0,0.0038,53.0,0.0028,51.0,0.0028,49,0.0028,47,0.00295,45.0,0.00295,41.0,60823,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2024,
+  ""trim"": ""7 Passenger"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,MDX,7 Passenger,SUV,AWD,YE1H3RJNW
+2025 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),54300,52958,0.975285,-1500,54458,51458,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,48558,base,0.00174,63.0,0.00174,62.0,0.00174,60.0,0.00174,58.0,0.00174,56,0.00174,54,0.00174,52.0,0.00174,48.0,70559,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2025,
+  ""trim"": null,
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,MDX,,SUV,AWD,YE1H3SJNW
+2024 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),59000,55656,0.943322,0,55656,55656,,,"Acura Lease Cash (0)
+Total: 0
+link",0,55656,YE1H4RKNW 4dr Wgn Tech,0.0038,55.0,0.0038,54.0,0.0038,52.0,0.0028,50.0,0.0028,48,0.0028,46,0.00295,44.0,0.00295,40.0,60824,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2024,
+  ""trim"": ""Tech"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,MDX,Tech,SUV,AWD,YE1H4RKNW
+2025 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),60450,57023,0.943309,-1500,58523,55523,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,52623,YE1H4SKNW 4dr Wgn Tech,0.00174,61.0,0.00174,60.0,0.00174,58.0,0.00174,56.0,0.00174,54,0.00174,52,0.00174,50.0,0.00174,46.0,70560,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2025,
+  ""trim"": ""Tech"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,MDX,Tech,SUV,AWD,YE1H4SKNW
+2024 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),66050,62042,0.939319,0,62042,62042,,,"Acura Lease Cash (0)
+Total: 0
+link",0,62042,YE1H8RKNW 4dr Wgn Advance,0.0038,55.0,0.0038,54.0,0.0038,52.0,0.0028,50.0,0.0028,48,0.0028,46,0.00295,44.0,0.00295,40.0,60826,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2024,
+  ""trim"": ""Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2024,Acura,MDX,Advance,SUV,AWD,YE1H8RKNW
+2025 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),67950,63823,0.939264,-1500,65323,62323,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,59423,YE1H8SKNW 4dr Wgn Advance,0.00174,58.0,0.00174,57.0,0.00174,55.0,0.00174,53.0,0.00174,51,0.00174,49,0.00174,47.0,0.00174,43.0,70562,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2025,
+  ""trim"": ""Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,MDX,Advance,SUV,AWD,YE1H8SKNW
+2025 Acura MDX AWD 7 Passenger,MDX AWD,American Honda Finance (Acura),69950,65700,0.939242,-1500,67200,64200,,,"Captive Lease Offer (2,900)
+Acura Lease Cash (0)
+Total: 2,900
+link",2900,61300,YE1H9SKNW 4dr Wgn A-Spec Advance,0.00174,58.0,0.00174,57.0,0.00174,55.0,0.00174,53.0,0.00174,51,0.00174,49,0.00174,47.0,0.00174,43.0,75286,3,"{
+  ""make"": ""Acura"",
+  ""model"": ""MDX"",
+  ""year"": 2025,
+  ""trim"": ""A-Spec Advance"",
+  ""body_type"": ""SUV"",
+  ""drive_train"": ""AWD""
+}",2025,Acura,MDX,A-Spec Advance,SUV,AWD,YE1H9SKNW

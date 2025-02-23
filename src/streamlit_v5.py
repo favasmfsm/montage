@@ -16,7 +16,7 @@ st.sidebar.image("src/logo.png", width=150)
 # -----------------------------
 # Load your merged CSV file
 try:
-    df = pd.read_csv("./data/merged_data_v3.csv")
+    df = pd.read_csv("./data/merged_data_v4.csv")
 except Exception as e:
     st.error("Error loading CSV file.")
     st.stop()
@@ -306,7 +306,7 @@ config_options = filtered_data.index.tolist()
 
 def format_option(idx):
     row = filtered_data.loc[idx]
-    return f"{row['Make']} {row['Model']} {row['Trim']} — MSRP: {row['MSRP']}"
+    return f"{row['Year']} {row['Make']} {row['Model']} {row['Style']} — MSRP: {row['MSRP']}"
 
 
 selected_idx = st.selectbox(
