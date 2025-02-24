@@ -16,13 +16,36 @@ st.sidebar.image("src/logo.png", width=150)
 # -----------------------------
 # Load your merged CSV file
 try:
-    df = pd.read_csv("./data/merged_data_v4.csv")
+    df = pd.read_csv("./data/merged_data_v5.csv")
+    df.fillna("", inplace=True)
 except Exception as e:
     st.error("Error loading CSV file.")
     st.stop()
 
 st.sidebar.header("Filter Options")
 api_key = st.sidebar.text_input("Enter your API Key", type="password")
+
+with st.sidebar.expander("Taxes and Fees Options"):
+    profit = st.text_input("Total profit", value="0")
+    tax_rate = st.text_input("% Tax Rate", value="8.875")
+    dmv_fee = st.text_input("DMV Fee", value="350")
+    doc_fee = st.text_input("Documentation Fee", value="249")
+    bank_fee = st.text_input("Bank Fee", value="595")
+
+
+# Convert inputs to float while handling empty or invalid values
+def parse_float(value, default):
+    try:
+        return float(value)
+    except ValueError:
+        return default
+
+
+tax_rate = parse_float(tax_rate, 8.875) * 0.01  # Convert percentage to decimal
+dmv_fee = parse_float(dmv_fee, 350)
+doc_fee = parse_float(doc_fee, 249)
+bank_fee = parse_float(bank_fee, 595)
+profit = parse_float(profit, 595)
 
 # -- CSV Data Filters (using multiselect for multiple selection) --
 # Lease term selection (in months)
@@ -108,25 +131,6 @@ selected_price_range = st.sidebar.slider(
 )
 
 
-with st.sidebar.expander("Taxes and Fees Options"):
-    tax_rate = st.text_input("% Tax Rate", value="8.875")
-    dmv_fee = st.text_input("DMV Fee", value="350")
-    doc_fee = st.text_input("Documentation Fee", value="249")
-    bank_fee = st.text_input("Bank Fee", value="595")
-
-
-# Convert inputs to float while handling empty or invalid values
-def parse_float(value, default):
-    try:
-        return float(value)
-    except ValueError:
-        return default
-
-
-tax_rate = parse_float(tax_rate, 8.875) * 0.01  # Convert percentage to decimal
-dmv_fee = parse_float(dmv_fee, 350)
-doc_fee = parse_float(doc_fee, 249)
-bank_fee = parse_float(bank_fee, 595)
 # -----------------------------
 # Apply Filters to CSV Data
 # -----------------------------
@@ -135,7 +139,7 @@ filtered_data = temp_df.copy()
 
 # Lease Computation for Each Entry
 def compute_lease(row, lease_term):
-    adjusted_cap_cost = row.get("Adjusted Cap Cost", 0)
+    adjusted_cap_cost = row.get("Adjusted Cap Cost", 0) + profit
     residual_value = row.get(f"residual_value_{lease_term}", 0)
     money_factor = row.get(f"MF {lease_term}", 0)
     depreciation_fee = (adjusted_cap_cost - residual_value) / lease_term
@@ -334,7 +338,7 @@ if not filtered_data.empty:
             else:
                 # Extract values from the selected configuration
                 msrp = selected_config["MSRP"]
-                adjusted_cap_cost = selected_config["Adjusted Cap Cost"]
+                adjusted_cap_cost = selected_config["Adjusted Cap Cost"] + profit
                 residual_percentage = (
                     selected_config[rp_column] + miles_map[miles][lease_term]
                 )  # e.g., 50 for 50%
