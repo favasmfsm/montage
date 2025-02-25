@@ -301,18 +301,15 @@ else:
             f"residual_value_{lease_term}",
         ]
     filtered_data.sort_values(by="MSRP", inplace=True)
-    main_df = (
-        filtered_data.groupby(["Year", "Make", "Model", "Trim"]).first().reset_index()
-    )
+    main_df = filtered_data.loc[
+        filtered_data.groupby(["Year", "Make", "Model", "Trim"])["MSRP"].idxmin()
+    ].reset_index(drop=True)
 
     st.dataframe(main_df[display_cols])
     with st.expander("##Other Options"):
-        other_options = filtered_data.merge(
-            main_df, on=["Year", "Make", "Model", "Trim"], how="left", indicator=True
-        )
-        other_options = other_options[other_options["_merge"] == "left_only"].drop(
-            columns=["_merge"]
-        )
+        other_options = filtered_data.loc[
+            ~filtered_data.groupby(["Year", "Make", "Model", "Trim"])["MSRP"].idxmin()
+        ].reset_index(drop=True)
 
         st.dataframe(other_options)
 
