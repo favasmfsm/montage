@@ -593,7 +593,7 @@ def fetch_car_data(
 
     # Remove keys with None values
     params = {k: v for k, v in params.items() if v is not None}
-
+    st.write(params)
     all_data = []
     start = 0
     total_fetched = 0
