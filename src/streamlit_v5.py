@@ -313,7 +313,8 @@ else:
         other_options = other_options[other_options["_merge"] == "left_only"].drop(
             columns=["_merge"]
         )
-        st.dataframe(other_options[display_cols])
+
+        st.dataframe(other_options)
 
 st.write("Select a car configuration for lease computation:")
 # Create selection options from the filtered data indices
