@@ -567,7 +567,7 @@ def fetch_car_data(
     api_key,
     selected_year,
     selected_make,
-    selected_model,
+    selected_models,
     zip_code,
     radius,
     msrp_range,
@@ -581,7 +581,7 @@ def fetch_car_data(
     params = {
         "year": selected_year,
         "make": selected_make.lower() if selected_make else None,
-        "model": selected_model.lower() if selected_model else None,
+        "model": selected_models if selected_models else None,
         "zip": zip_code,
         "radius": radius,
         "msrp_range": msrp_range,
@@ -631,6 +631,8 @@ def fetch_car_data(
 st.markdown("## 3. Suggested Cars (from API)")
 
 # Filters above the table
+preferred_dealers_only = st.checkbox("Preferred Dealers Only", value=False)
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
@@ -638,16 +640,15 @@ with col1:
         "Dealer Type", options=["franchise", "independent"], index=0
     )
 with col2:
-    preferred_dealers_only = st.checkbox("Preferred Dealers Only", value=False)
+    msrp_values = st.number_input("MSRP range from selected config", min_value=2000)
+    msrp_range = (
+        f"{selected_config['MSRP']-msrp_values}-{selected_config['MSRP']+msrp_values}"
+    )
 with col3:
     zip_code = st.text_input("ZIP Code", "11223")
 with col4:
     radius = st.number_input("Radius (miles)", min_value=100)
 
-msrp_values = st.number_input("MSRP range from selected config", min_value=2000)
-msrp_range = (
-    f"{selected_config['MSRP']-msrp_values}-{selected_config['MSRP']+msrp_values}"
-)
 
 if api_key:
     with st.spinner("Fetching suggested cars..."):
@@ -655,7 +656,7 @@ if api_key:
             api_key,
             int(selected_config["Year"]),
             selected_config["Make"],
-            selected_config["Model"],
+            selected_models,
             zip_code,
             radius,
             msrp_range,
