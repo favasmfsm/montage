@@ -581,13 +581,15 @@ def fetch_car_data(
     params = {
         "year": selected_year,
         "make": selected_make.lower() if selected_make else None,
-        "model": selected_models if selected_models else None,
+        # "model": selected_models if selected_models else None,
         "zip": zip_code,
         "radius": radius,
         "msrp_range": msrp_range,
         "dealer_type": dealer_type,
         # "preferred_dealers_only": True if preferred_dealers_only else None,
     }
+    if selected_models:
+        params["model"] = ",".join(selected_models)
 
     # Remove keys with None values
     params = {k: v for k, v in params.items() if v is not None}
