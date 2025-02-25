@@ -317,11 +317,11 @@ with st.expander("##Other Options"):
 
 st.write("Select a car configuration for lease computation:")
 # Create selection options from the filtered data indices
-config_options = filtered_data.index.tolist()
+config_options = main_df.index.tolist()
 
 
 def format_option(idx):
-    row = filtered_data.loc[idx]
+    row = main_df.loc[idx]
     return f"{row['Year']} {row['Make']} {row['Model']} {row['Style']} — MSRP: {row['MSRP']}"
 
 
@@ -330,7 +330,7 @@ selected_idx = st.selectbox(
     options=config_options,
     format_func=format_option,
 )
-selected_config = filtered_data.loc[selected_idx]
+selected_config = main_df.loc[selected_idx]
 # --- 2. Lease Computation ---
 if not filtered_data.empty:
     with st.expander("### Compute lease"):
