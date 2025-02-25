@@ -317,7 +317,7 @@ else:
         # Select all rows except the ones in main_df
         other_options = filtered_data.drop(index=min_msrp_idx).reset_index(drop=True)
 
-        st.dataframe(other_options)
+        st.dataframe(other_options[display_cols])
 
 st.write("Select a car configuration for lease computation:")
 # Create selection options from the filtered data indices
