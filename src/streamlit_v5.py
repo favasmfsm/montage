@@ -301,15 +301,21 @@ else:
             f"residual_value_{lease_term}",
         ]
     filtered_data.sort_values(by="MSRP", inplace=True)
-    main_df = filtered_data.loc[
-        filtered_data.groupby(["Year", "Make", "Model", "Trim"])["MSRP"].idxmin()
-    ].reset_index(drop=True)
 
+    # Get the index of the minimum MSRP for each unique combination
+    min_msrp_idx = filtered_data.groupby(["Year", "Make", "Model", "Trim"])[
+        "MSRP"
+    ].idxmin()
+
+    # Select the main dataset (cheapest options)
+    main_df = filtered_data.loc[min_msrp_idx].reset_index(drop=True)
+
+    # Display the main dataset
     st.dataframe(main_df[display_cols])
-    with st.expander("##Other Options"):
-        other_options = filtered_data.loc[
-            ~filtered_data.groupby(["Year", "Make", "Model", "Trim"])["MSRP"].idxmin()
-        ].reset_index(drop=True)
+
+    with st.expander("## Other Options"):
+        # Select all rows except the ones in main_df
+        other_options = filtered_data.drop(index=min_msrp_idx).reset_index(drop=True)
 
         st.dataframe(other_options)
 
