@@ -306,14 +306,14 @@ else:
     )
 
     st.dataframe(main_df[display_cols])
-with st.expander("##Other Options"):
-    other_options = filtered_data.merge(
-        main_df, on=["Year", "Make", "Model", "Trim"], how="left", indicator=True
-    )
-    other_options = other_options[other_options["_merge"] == "left_only"].drop(
-        columns=["_merge"]
-    )
-    st.dataframe(other_options[display_cols])
+    with st.expander("##Other Options"):
+        other_options = filtered_data.merge(
+            main_df, on=["Year", "Make", "Model", "Trim"], how="left", indicator=True
+        )
+        other_options = other_options[other_options["_merge"] == "left_only"].drop(
+            columns=["_merge"]
+        )
+        st.dataframe(other_options[display_cols])
 
 st.write("Select a car configuration for lease computation:")
 # Create selection options from the filtered data indices
