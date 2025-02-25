@@ -629,19 +629,27 @@ def fetch_car_data(
 
 # --- Suggested Cars Section ---
 st.markdown("## 3. Suggested Cars (from API)")
-dealer_type = st.sidebar.selectbox(
-    "Dealer Type", options=["franchise", "independent"], index=0
-)
-preferred_dealers_only = st.sidebar.checkbox("Preferred Dealers Only", value=False)
-zip_code = st.sidebar.text_input("ZIP Code", "11223")
-radius = st.sidebar.number_input("Radius (miles)", min_value=100)
-msrp_values = st.sidebar.number_input("MSRP range from selected config", min_value=2000)
+
+# Filters above the table
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    dealer_type = st.selectbox(
+        "Dealer Type", options=["franchise", "independent"], index=0
+    )
+with col2:
+    preferred_dealers_only = st.checkbox("Preferred Dealers Only", value=False)
+with col3:
+    zip_code = st.text_input("ZIP Code", "11223")
+with col4:
+    radius = st.number_input("Radius (miles)", min_value=100)
+
+msrp_values = st.number_input("MSRP range from selected config", min_value=2000)
 msrp_range = (
     f"{selected_config['MSRP']-msrp_values}-{selected_config['MSRP']+msrp_values}"
 )
 
 if api_key:
-
     with st.spinner("Fetching suggested cars..."):
         api_df = fetch_car_data(
             api_key,
@@ -656,75 +664,73 @@ if api_key:
         )
 
         if api_df is not None:
-            # Expand "build" column if present
             if "build" in api_df.columns:
                 build_expanded = api_df["build"].apply(pd.Series)
                 api_df = pd.concat(
                     [api_df.drop(columns=["build"]), build_expanded], axis=1
                 )
 
-            # Sort by MSRP
             if "msrp" in api_df.columns:
                 api_df.sort_values(by="msrp", inplace=True, na_position="last")
 
-            # Store data in session state
             st.session_state["api_df"] = api_df
         else:
             st.session_state["api_df"] = None
             st.info("No suggested cars found from API with the given parameters.")
+
 dealer_df = pd.read_csv("./output/prefered_dealer_names.csv")
-# Retain fetched data in session state
+
 if "api_df" in st.session_state and st.session_state["api_df"] is not None:
     api_df = st.session_state["api_df"]
-    vdp_url = api_df["vdp_url"]
-    dealer_name = api_df["dealer"].apply(
-        lambda x: (x["name"] if x and "name" in x else None)
+    api_df["year"] = api_df["year"].astype(str)
+    api_df["car_link"] = api_df["vdp_url"]
+    api_df["dealer_name"] = api_df["dealer"].apply(
+        lambda x: x.get("name") if isinstance(x, dict) else None
     )
-    dealer_zip = api_df["dealer"].apply(
-        lambda x: (x["zip"] if x and "zip" in x else None)
+    api_df["dealer_zip"] = api_df["dealer"].apply(
+        lambda x: x.get("zip") if isinstance(x, dict) else None
     )
-    dealer_type = api_df["dealer"].apply(
-        lambda x: (x["dealer_type"] if x and "dealer_type" in x else None)
+    api_df["dealer_type"] = api_df["dealer"].apply(
+        lambda x: x.get("dealer_type") if isinstance(x, dict) else None
     )
-    api_df["year"] = api_df["year"].apply(lambda x: f"{x}")
-    api_df["car_link"] = vdp_url
-    api_df["dealer_type"] = dealer_type
-    api_df["dealer_name"] = dealer_name
-    api_df["dealer_zip"] = dealer_zip
-    # Sidebar filters (do not trigger re-fetch)
 
-    if "dealer_name" in api_df.columns:
-        dealer_name_options = sorted(api_df["dealer_name"].dropna().unique())
-        selected_dealer_name = st.sidebar.multiselect(
-            "Select Preferred Dealer", options=dealer_name_options, default=[]
-        )
-    if "dealer_type" in api_df.columns:
-        dealer_type_options = sorted(api_df["dealer_type"].dropna().unique())
-        selected_dealer_type = st.sidebar.multiselect(
-            "Select Preferred Dealer Type", options=dealer_type_options, default=[]
-        )
-    if "interior_color" in api_df.columns:
-        int_color_options = sorted(api_df["interior_color"].dropna().unique())
-        selected_int_colors = st.sidebar.multiselect(
-            "Select Interior Color", options=int_color_options, default=[]
-        )
+    # Additional Filters
+    col1, col2, col3, col4 = st.columns(4)
 
-    if "exterior_color" in api_df.columns:
-        ext_color_options = sorted(api_df["exterior_color"].dropna().unique())
-        selected_ext_colors = st.sidebar.multiselect(
-            "Select Exterior Color", options=ext_color_options, default=[]
-        )
+    with col1:
+        if "dealer_name" in api_df.columns:
+            dealer_name_options = sorted(api_df["dealer_name"].dropna().unique())
+            selected_dealer_name = st.multiselect(
+                "Select Preferred Dealer", options=dealer_name_options, default=[]
+            )
+    with col2:
+        if "dealer_type" in api_df.columns:
+            dealer_type_options = sorted(api_df["dealer_type"].dropna().unique())
+            selected_dealer_type = st.multiselect(
+                "Select Dealer Type", options=dealer_type_options, default=[]
+            )
+    with col3:
+        if "trim" in api_df.columns:
+            trim_options = sorted(api_df["trim"].dropna().unique())
+            selected_trim = st.multiselect(
+                "Select Trim", options=trim_options, default=[]
+            )
+    with col4:
+        if "body_type" in api_df.columns:
+            body_type_options = sorted(api_df["body_type"].dropna().unique())
+            selected_body_type = st.multiselect(
+                "Select Body Type", options=body_type_options, default=[]
+            )
 
     # Apply filters dynamically
-    if selected_int_colors:
-        api_df = api_df[api_df["interior_color"].isin(selected_int_colors)]
-    if selected_ext_colors:
-        api_df = api_df[api_df["exterior_color"].isin(selected_ext_colors)]
     if selected_dealer_name:
         api_df = api_df[api_df["dealer_name"].isin(selected_dealer_name)]
     if selected_dealer_type:
         api_df = api_df[api_df["dealer_type"].isin(selected_dealer_type)]
-
+    if selected_trim:
+        api_df = api_df[api_df["trim"].isin(selected_trim)]
+    if selected_body_type:
+        api_df = api_df[api_df["body_type"].isin(selected_body_type)]
     if preferred_dealers_only:
         api_df = api_df[api_df.dealer_name.isin(dealer_df["Name"])]
 
@@ -734,15 +740,12 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         "make",
         "model",
         "trim",
-        # "version",
         "body_type",
-        # "vehicle_type",
         "dom",
         "vin",
         "transmission",
         "drivetrain",
         "fuel_type",
-        # "engine",
         "heading",
         "msrp",
         "price",
