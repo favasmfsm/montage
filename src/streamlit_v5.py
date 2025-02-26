@@ -308,7 +308,7 @@ else:
         ]
         if col in filtered_data.columns
     ]
-    st.write(display_cols)
+    # st.write(display_cols)
 
     # Insert lease term columns after "MSRP"
     display_cols[msrp_index:msrp_index] = lease_term_cols
@@ -322,7 +322,7 @@ else:
 
     # Select the main dataset (cheapest options)
     main_df = filtered_data.loc[min_msrp_idx].reset_index(drop=True)
-    st.write(display_cols)
+    # st.write(display_cols)
     # Display the main dataset
     st.dataframe(main_df[display_cols])
 
