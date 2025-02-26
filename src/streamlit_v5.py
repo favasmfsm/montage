@@ -747,13 +747,15 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         if "trim" in api_df.columns:
             trim_options = sorted(api_df["trim"].dropna().unique())
             selected_trim = st.multiselect(
-                "Select Trim", options=trim_options, default=[]
+                "Select Trim", options=trim_options, default=selected_trims
             )
     with col4:
         if "body_type" in api_df.columns:
             body_type_options = sorted(api_df["body_type"].dropna().unique())
             selected_body_type = st.multiselect(
-                "Select Body Type", options=body_type_options, default=[]
+                "Select Body Type",
+                options=body_type_options,
+                default=selected_body_types,
             )
 
     # Apply filters dynamically
