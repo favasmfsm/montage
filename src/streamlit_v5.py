@@ -16,7 +16,7 @@ st.sidebar.image("src/logo.png", width=150)
 # -----------------------------
 # Load your merged CSV file
 try:
-    df = pd.read_csv("./data/merged_data_v5.csv")
+    df = pd.read_csv("./data/merged_data_v6.csv")
     df.fillna("", inplace=True)
 except Exception as e:
     st.error("Error loading CSV file.")
@@ -111,6 +111,7 @@ selected_body_types = st.sidebar.multiselect(
 )
 if selected_body_types:
     temp_df = temp_df[temp_df["body_type"].isin(selected_body_types)]
+
 
 # Trim filter (Show all initially)
 trim_options = sorted(temp_df["Trim"].dropna().unique())
@@ -348,6 +349,19 @@ selected_idx = st.selectbox(
     format_func=format_option,
 )
 selected_config = filtered_data.loc[selected_idx]
+rebate_options = [
+    selected_config[f"Rebate{i}"]
+    for i in range(1, 14)
+    if pd.notna(selected_config[f"Rebate{i}"])
+]
+selected_rebates = st.multiselect("Select applicable rebates", rebate_options)
+rebate_sum = 0
+for rebate in selected_rebates:
+    rebate_idx = [i for i in range(1, 14) if selected_config[f"Rebate{i}"] == rebate][0]
+    value_col = f"MatrixValue{rebate_idx}"
+    rebate_sum += selected_config[value_col]
+
+
 # --- 2. Lease Computation ---
 if not filtered_data.empty:
     with st.expander("### Compute lease"):
@@ -367,7 +381,9 @@ if not filtered_data.empty:
             else:
                 # Extract values from the selected configuration
                 msrp = selected_config["MSRP"]
-                adjusted_cap_cost = selected_config["Adjusted Cap Cost"] + profit
+                adjusted_cap_cost = (
+                    selected_config["Adjusted Cap Cost"] + profit - rebate_sum
+                )
                 residual_percentage = (
                     selected_config[rp_column] + miles_map[miles][lease_term]
                 )  # e.g., 50 for 50%
