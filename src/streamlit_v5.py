@@ -751,10 +751,10 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
             )
     with col4:
         if "body_type" in api_df.columns:
-            body_type_options = sorted(api_df["body_type"].dropna().unique())
-            selected_body_type = st.multiselect(
+            api_body_type_options = sorted(api_df["body_type"].dropna().unique())
+            api_selected_body_type = st.multiselect(
                 "Select Body Type",
-                options=body_type_options,
+                options=api_body_type_options,
                 default=selected_body_types,
             )
 
@@ -765,8 +765,8 @@ if "api_df" in st.session_state and st.session_state["api_df"] is not None:
         api_df = api_df[api_df["dealer_type"].isin(selected_dealer_type)]
     if selected_trim:
         api_df = api_df[api_df["trim"].isin(selected_trim)]
-    if selected_body_type:
-        api_df = api_df[api_df["body_type"].isin(selected_body_type)]
+    if api_selected_body_type:
+        api_df = api_df[api_df["body_type"].isin(api_selected_body_type)]
     if preferred_dealers_only:
         api_df = api_df[api_df.dealer_name.isin(dealer_df["Name"])]
 
