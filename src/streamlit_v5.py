@@ -277,16 +277,15 @@ else:
     display_cols = [
         col
         for col in [
-            "MSRP",
             "Year",
             "Make",
             "Model",
             "Trim",
             "Style",
+            "MSRP",
+            # Lease term columns will be inserted here
             "body_type",
             "Bank",
-            # "Monthly Payment",
-            # "First Payment",
             "Total_Rebates",
             "Package",
             "Rate Model",
@@ -294,12 +293,25 @@ else:
         ]
         if col in filtered_data.columns
     ]
-    for lease_term in lease_terms:
-        display_cols += [
+
+    # Find the index where to insert lease term columns
+    msrp_index = display_cols.index("MSRP") + 1
+
+    # Generate lease term columns
+    lease_term_cols = [
+        col
+        for lease_term in lease_terms
+        for col in [
             f"Monthly Payment_{lease_term}",
             f"Due at Signing_{lease_term}",
             f"residual_value_{lease_term}",
         ]
+        if col in filtered_data.columns
+    ]
+
+    # Insert lease term columns after "MSRP"
+    display_cols[msrp_index:msrp_index] = lease_term_cols
+
     filtered_data.sort_values(by="MSRP", inplace=True)
 
     # Get the index of the minimum MSRP for each unique combination
@@ -321,11 +333,11 @@ else:
 
 st.write("Select a car configuration for lease computation:")
 # Create selection options from the filtered data indices
-config_options = main_df.index.tolist()
+config_options = filtered_data.index.tolist()
 
 
 def format_option(idx):
-    row = main_df.loc[idx]
+    row = filtered_data.loc[idx]
     return f"{row['Year']} {row['Make']} {row['Model']} {row['Style']} — MSRP: {row['MSRP']}"
 
 
@@ -334,7 +346,7 @@ selected_idx = st.selectbox(
     options=config_options,
     format_func=format_option,
 )
-selected_config = main_df.loc[selected_idx]
+selected_config = filtered_data.loc[selected_idx]
 # --- 2. Lease Computation ---
 if not filtered_data.empty:
     with st.expander("### Compute lease"):
@@ -581,22 +593,21 @@ if not filtered_data.empty:
 @st.cache_data
 def fetch_car_data(
     api_key,
-    selected_year,
-    selected_make,
+    selected_years,
+    selected_makes,
     selected_models,
     zip_code,
     radius,
     msrp_range,
     dealer_type,
-    preferred_dealers_only,
     max_results=500,  # Limit total results to prevent excessive API calls
     rows_per_page=50,  # Fetch 50 results per request
 ):
     BASE_URL = f"https://mc-api.marketcheck.com/v2/search/car/active?api_key={api_key}&car_type=new"
 
     params = {
-        "year": selected_year,
-        "make": selected_make.lower() if selected_make else None,
+        # "year": selected_year,
+        # "make": selected_make.lower() if selected_make else None,
         # "model": selected_models if selected_models else None,
         "zip": zip_code,
         "radius": radius,
@@ -606,10 +617,14 @@ def fetch_car_data(
     }
     if selected_models:
         params["model"] = ",".join(selected_models)
+    if selected_makes:
+        params["make"] = ",".join(selected_makes)
+    if selected_years:
+        params["year"] = ",".join(selected_years)
 
     # Remove keys with None values
     params = {k: v for k, v in params.items() if v is not None}
-    st.write(params)
+    # st.write(params)
     all_data = []
     start = 0
     total_fetched = 0
@@ -672,14 +687,13 @@ if api_key:
     with st.spinner("Fetching suggested cars..."):
         api_df = fetch_car_data(
             api_key,
-            int(selected_config["Year"]),
-            selected_config["Make"],
+            selected_years,
+            selected_makes,
             selected_models,
             zip_code,
             radius,
             msrp_range,
             dealer_type,
-            preferred_dealers_only,
         )
 
         if api_df is not None:
