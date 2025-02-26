@@ -621,7 +621,7 @@ def fetch_car_data(
     if selected_makes:
         params["make"] = ",".join(selected_makes)
     if selected_years:
-        params["year"] = ",".join(selected_years)
+        params["year"] = ",".join(map(str, selected_years))
 
     # Remove keys with None values
     params = {k: v for k, v in params.items() if v is not None}
